@@ -31,7 +31,7 @@ class MyApp extends StatelessWidget {
         // tested with just a hot reload.
         // colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         colorScheme: ColorScheme.dark(
-          inversePrimary: Colors.green[800],
+          inversePrimary: Colors.brown[50],
           primary: Colors.brown.shade800,
           primaryContainer: Colors.grey.shade700,
         ),
