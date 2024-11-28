@@ -25,45 +25,48 @@ class _VideoPageState extends State<Videopage> {
       body: Column(
         // crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          Center(
-            child: Videoplayer(
-                url:
-                    'https://user-images.githubusercontent.com/28951144/229373720-14d69157-1a56-4a78-a2f4-d7a134d7c3e9.mp4'),
+          Expanded(
+            flex: 1,
+            child: Center(
+              child: Videoplayer(
+                  url:
+                      'https://user-images.githubusercontent.com/28951144/229373720-14d69157-1a56-4a78-a2f4-d7a134d7c3e9.mp4'),
+            ),
           ),
           lyrics != null
               ? Expanded(
-                  child: SingleChildScrollView(
-                    // scrollDirection: Axis.vertical,
-                    // primary: true,
+                  flex: 1,
+                  child: Container(
 
-                    child: Container(
-                        // height: 200,
-                        margin:
-                            EdgeInsets.symmetric(horizontal: 16, vertical: 32),
-                        child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Container(
-                                margin: EdgeInsets.only(bottom: 20),
-                                child: Text('Lyrics',
-                                    // textAlign: TextAlign.end,
-                                    textAlign: TextAlign.left,
-                                    style: TextStyle(
-                                      color: Theme.of(context)
-                                          .colorScheme
-                                          .inversePrimary,
-                                      fontSize: 20,
-                                      // backgroundColor: Colors.grey,
-                                    )),
-                              ),
-                              Text(
-                                lyrics,
-                                style: TextStyle(
+                      // height: 200,
+                      margin:
+                          EdgeInsets.symmetric(horizontal: 16, vertical: 32),
+                      child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Container(
+                              margin: EdgeInsets.only(bottom: 20),
+                              child: Text('Lyrics',
+                                  // textAlign: TextAlign.end,
+                                  textAlign: TextAlign.left,
+                                  style: TextStyle(
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .inversePrimary,
+                                    fontSize: 20,
                                     // backgroundColor: Colors.grey,
-                                    ),
+                                  )),
+                            ),
+                            // Scrollable part with a single Text widget
+                            Expanded(
+                              child: SingleChildScrollView(
+                                child: Text(
+                                  lyrics,
+                                  // style: TextStyle(fontSize: 16),
+                                ),
                               ),
-                            ])),
-                  ),
+                            ),
+                          ])),
                 )
               : Container(),
         ],
