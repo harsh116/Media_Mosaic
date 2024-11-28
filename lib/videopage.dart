@@ -1,0 +1,73 @@
+import 'package:flutter/material.dart';
+// import 'package:video_player/video_player.dart';
+
+import './models/screen_arguments.dart';
+import './videoplayer.dart';
+
+class Videopage extends StatefulWidget {
+  const Videopage({super.key});
+  @override
+  State<Videopage> createState() => _VideoPageState();
+}
+
+class _VideoPageState extends State<Videopage> {
+  @override
+  Widget build(BuildContext context) {
+    final ScreenArguments args =
+        ModalRoute.of(context)!.settings.arguments as ScreenArguments;
+    // final lyrics = ModalRoute.of(context)!.settings.arguments as ScreenArgumentsl
+    late final lyrics = args.lyrics;
+
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(args.title),
+      ),
+      body: Column(
+        // crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Center(
+            child: Videoplayer(
+                url:
+                    'https://user-images.githubusercontent.com/28951144/229373720-14d69157-1a56-4a78-a2f4-d7a134d7c3e9.mp4'),
+          ),
+          lyrics != null
+              ? Expanded(
+                  child: SingleChildScrollView(
+                    // scrollDirection: Axis.vertical,
+                    // primary: true,
+
+                    child: Container(
+                        // height: 200,
+                        margin:
+                            EdgeInsets.symmetric(horizontal: 16, vertical: 32),
+                        child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Container(
+                                margin: EdgeInsets.only(bottom: 20),
+                                child: Text('Lyrics',
+                                    // textAlign: TextAlign.end,
+                                    textAlign: TextAlign.left,
+                                    style: TextStyle(
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .inversePrimary,
+                                      fontSize: 20,
+                                      // backgroundColor: Colors.grey,
+                                    )),
+                              ),
+                              Text(
+                                lyrics,
+                                style: TextStyle(
+                                    // backgroundColor: Colors.grey,
+                                    ),
+                              ),
+                            ])),
+                  ),
+                )
+              : Container(),
+        ],
+      ),
+    );
+  }
+}

@@ -1,18 +1,46 @@
 import 'package:flutter/material.dart';
 
+import './models/screen_arguments.dart';
+import './lyrics.dart';
+
+import './constants.dart' as Constants;
+
 class Card extends StatefulWidget {
-  const Card({super.key});
+  const Card({super.key, required this.title});
+  final String title;
 
   @override
   State<Card> createState() => _CardState();
 }
 
 class _CardState extends State<Card> {
+  String? lyrics;
+
+  @override
+  void initState() {
+    // for (Lyric lyric in lyricsList) {
+    //   if (widget.title == lyric.title) {
+    //     setState(() {
+    //       lyrics = lyric.lyrics;
+    //     });
+    //   }
+    // }
+
+    setState(() {});
+  }
+
   @override
   Widget build(BuildContext context) {
-    double carWidth = 300.0;
-    double videoIconSize = 32;
-    double imageHeight = 200;
+    for (Lyric lyric in lyricsList) {
+      if (widget.title == lyric.title) {
+        setState(() {
+          lyrics = lyric.lyrics;
+        });
+      }
+    }
+    double carWidth = Constants.carWidth;
+    double videoIconSize = Constants.videoIconSize;
+    double imageHeight = Constants.imageHeight;
 
     return Container(
         decoration: BoxDecoration(
@@ -76,7 +104,15 @@ class _CardState extends State<Card> {
                     borderRadius: BorderRadius.zero,
                   )),
               clipBehavior: Clip.hardEdge,
-              onPressed: () => print('as'),
+              onPressed: () {
+                print('overlay pressed');
+                Navigator.pushNamed(
+                  context,
+                  '/video',
+                  // arguments: {'title': 'Numb'},
+                  arguments: ScreenArguments(widget.title, lyrics: lyrics),
+                );
+              },
             ),
           ],
         ));
