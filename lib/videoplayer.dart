@@ -48,6 +48,7 @@ class _VideoPlayerState extends State<Videoplayer> {
           }
 
           return Video(
+            pauseUponEnteringBackgroundMode: false,
             width: w,
             height: h,
             fill: Colors.grey,
