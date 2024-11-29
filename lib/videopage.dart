@@ -101,7 +101,9 @@ class _VideoPageState extends State<Videopage> {
             ],
           ),
           floatingActionButton: FloatingActionButton(
-              child: Icon(Icons.add),
+              child: Icon(Icons.picture_in_picture),
+              backgroundColor: Color.fromRGBO(255, 255, 255, 0.1),
+              foregroundColor: Theme.of(context).colorScheme.inversePrimary,
               onPressed: () {
                 // setState(() => isPIPMode = true);
                 PIPView.of(context)!
