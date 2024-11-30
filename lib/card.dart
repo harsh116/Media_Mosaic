@@ -69,7 +69,7 @@ class _CardState extends State<Card> {
                     color: Theme.of(context).colorScheme.primaryContainer,
                     // color: Colors.pink,
                   ),
-                  child: Text('The Numb',
+                  child: Text(widget.title,
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         fontSize: 18,
@@ -110,7 +110,8 @@ class _CardState extends State<Card> {
                   context,
                   '/video',
                   // arguments: {'title': 'Numb'},
-                  arguments: ScreenArguments(widget.title, lyrics: lyrics),
+                  arguments: ScreenArguments(widget.title,
+                      homepageContext: context, lyrics: lyrics),
                 );
               },
             ),

@@ -7,9 +7,12 @@ import './models/screen_arguments.dart';
 import './videoplayer.dart';
 import './homepage.dart';
 import './video_page_full_screen.dart';
+import './pipview_custom.dart';
+import 'rawpipview_custom.dart' as Custom;
 
 class Videopage extends StatefulWidget {
-  const Videopage({super.key});
+  Videopage({super.key, this.homepageState});
+  Widget? homepageState;
   @override
   State<Videopage> createState() => _VideoPageState();
 }
@@ -45,19 +48,31 @@ class _VideoPageState extends State<Videopage> {
     late final lyrics = args.lyrics;
     // final isFloating = _bottomWidget != null;
 
-    return PIPView(
-        floatingHeight: 200,
-        floatingWidth: 300,
-        // floatingHeight: 400,
-        // floatingWidth: 600,
-        initialCorner: PIPViewCorner.bottomRight,
-        // topWidget: IgnorePointer(
-        //      ignoring: isFloating,
-        //      child: Builder(
-        //        builder: (context) => widget.builder(context, isFloating),
-        //      ),
-        //    ),
-        builder: (context, isFloating) =>
-            VideoPageFullScreen(args: args, isFloating: isFloating));
+    return Stack(
+      children: [
+        PIPViewCustom(
+            floatingHeight: 200,
+            floatingWidth: 300,
+            // floatingHeight: 400,
+            // floatingWidth: 600,
+            initialCorner: Custom.PIPViewCorner.bottomRight,
+            // topWidget: IgnorePointer(
+            //      ignoring: isFloating,
+            //      child: Builder(
+            //        builder: (context) => widget.builder(context, isFloating),
+            //      ),
+            //    ),
+            builder: (context, isFloating) => VideoPageFullScreen(
+                  args: args,
+                  isFloating: isFloating,
+                  homepageState: widget.homepageState,
+                  homepageContext: args.homepageContext,
+                )),
+        // Positioned(
+        //   child: IconButton(icon: Icon(Icons.close), onPressed: () => {}),
+        //   top: 0,
+        // ),
+      ],
+    );
   }
 }

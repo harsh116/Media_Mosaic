@@ -68,22 +68,34 @@ class _MyHomePageState extends State<MyHomePage> {
             // in the middle of the parent.
 
             child: Container(
-              width:
-                  MediaQuery.sizeOf(context).width > (Constants.carWidth + 20)
-                      ? MediaQuery.sizeOf(context).width
-                      : 320,
-              height: double.infinity,
-              margin: EdgeInsets.symmetric(horizontal: 16, vertical: 32),
-              // color: Colors.yellow,
-              child: Flex(
-                direction: Axis.horizontal,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: <Widget>[
-                  customCard.Card(title: 'Numb'),
-                ],
-              ),
-            ),
+                width:
+                    MediaQuery.sizeOf(context).width > (Constants.carWidth + 20)
+                        ? MediaQuery.sizeOf(context).width
+                        : 320,
+                height: double.infinity,
+                margin: EdgeInsets.symmetric(horizontal: 16, vertical: 32),
+                // color: Colors.yellow,
+                // child: Flex(
+                //   direction: Axis.horizontal,
+                //   crossAxisAlignment: CrossAxisAlignment.start,
+                //   mainAxisAlignment: MainAxisAlignment.spaceAround,
+                //   children: <Widget>[
+                //     for (int i = 0; i < 10; i++) customCard.Card(title: 'Numb'),
+                //   ],
+                // ),
+                child: SingleChildScrollView(
+                  child: Center(
+                    child: Wrap(
+                        spacing: 40,
+                        runSpacing: 20,
+                        direction: Axis.horizontal,
+                        crossAxisAlignment: WrapCrossAlignment.start,
+                        children: [
+                          for (int i = 0; i < 10; i++)
+                            customCard.Card(title: 'Numb ${i + 1}'),
+                        ]),
+                  ),
+                )),
           ),
         ),
         floatingActionButton: FloatingActionButton(

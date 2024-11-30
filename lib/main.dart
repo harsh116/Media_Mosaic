@@ -13,8 +13,15 @@ void main() {
   runApp(const MyApp());
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({super.key});
+
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  Widget? homepageState;
 
   // This widget is the root of your application.
   @override
@@ -48,8 +55,13 @@ class MyApp extends StatelessWidget {
       // home: const MyHomePage(title: 'Playlist'),
       initialRoute: '/',
       routes: {
-        '/': (context) => const MyHomePage(title: 'Playlist'),
-        '/video': (context) => const Videopage(),
+        '/': (context) {
+          // setState(() =>
+          homepageState = const MyHomePage(title: 'Playlist');
+          // );
+          return homepageState!;
+        },
+        '/video': (context) => Videopage(homepageState: homepageState),
       },
     );
   }

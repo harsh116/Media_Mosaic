@@ -1,8 +1,11 @@
+import 'package:flutter/material.dart';
+
 class ScreenArguments {
   final String title;
   String? lyrics;
+  final BuildContext homepageContext;
 
-  ScreenArguments(this.title, {this.lyrics});
+  ScreenArguments(this.title, {required this.homepageContext, this.lyrics});
 }
 
 class Lyric {

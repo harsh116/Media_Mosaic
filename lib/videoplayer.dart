@@ -49,12 +49,21 @@ class _VideoPlayerState extends State<Videoplayer> {
             w = h / kAspectRatio;
           }
 
-          return Video(
-            pauseUponEnteringBackgroundMode: false,
-            width: w,
-            height: h,
-            fill: Colors.grey,
-            controller: _controller,
+          return Stack(
+            children: [
+              Video(
+                pauseUponEnteringBackgroundMode: false,
+                width: w,
+                height: h,
+                fill: Colors.grey,
+                controller: _controller,
+              ),
+              // Positioned(
+              //   child: IconButton(icon: Icon(Icons.close), onPressed: () => {}),
+              //   top: 10,
+              //   right: 10,
+              // ),
+            ],
           );
         },
       ),

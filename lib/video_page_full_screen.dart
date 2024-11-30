@@ -1,15 +1,22 @@
 import 'package:flutter/material.dart';
-import 'package:pip_view/pip_view.dart';
+// import 'package:pip_view/pip_view.dart';
 
 import './models/screen_arguments.dart';
 import './videoplayer.dart';
 import './homepage.dart';
+import './pipview_custom.dart';
 
 class VideoPageFullScreen extends StatefulWidget {
   final ScreenArguments args;
   final bool isFloating;
-  const VideoPageFullScreen(
-      {super.key, required this.args, required this.isFloating});
+  Widget? homepageState;
+  final BuildContext homepageContext;
+  VideoPageFullScreen(
+      {super.key,
+      required this.args,
+      required this.isFloating,
+      this.homepageState,
+      required this.homepageContext});
   @override
   State<VideoPageFullScreen> createState() => _VideoPageFullScreenState();
 }
@@ -18,9 +25,12 @@ class _VideoPageFullScreenState extends State<VideoPageFullScreen> {
   var lyrics;
   @override
   Widget build(BuildContext context) {
+    bool isFloating = widget.isFloating;
+    // bool isFloating = false;
+
     lyrics = widget.args.lyrics;
     return Scaffold(
-        appBar: widget.isFloating
+        appBar: isFloating
             ? null
             : AppBar(
                 title: Text(widget.args.title),
@@ -36,7 +46,7 @@ class _VideoPageFullScreenState extends State<VideoPageFullScreen> {
                         'https://user-images.githubusercontent.com/28951144/229373720-14d69157-1a56-4a78-a2f4-d7a134d7c3e9.mp4'),
               ),
             ),
-            widget.args.lyrics != null && !widget.isFloating
+            widget.args.lyrics != null && !isFloating
                 ? Expanded(
                     flex: 1,
                     child: Container(
@@ -85,7 +95,7 @@ class _VideoPageFullScreenState extends State<VideoPageFullScreen> {
             //         child: Icon(Icons.close),
             //       )
             //     :
-            widget.isFloating
+            isFloating
                 ? null
                 : Tooltip(
                     message: 'Picture in Picture',
@@ -104,8 +114,12 @@ class _VideoPageFullScreenState extends State<VideoPageFullScreen> {
                             Theme.of(context).colorScheme.inversePrimary,
                         onPressed: () {
                           // setState(() => isPIPMode = true);
-                          PIPView.of(context)!.presentBelow(
-                              const MyHomePage(title: 'playlist'));
+                          // PIPViewCustom.of(context)!.presentBelow(
+                          //     const MyHomePage(title: 'playlist'));
+                          PIPViewCustom.of(context)!.presentBelow(
+                              widget.homepageState!, widget.homepageContext);
+                          // PIPViewCustom.of(context)!
+                          //     .presentBelow(null);
                         },
                         child: const Icon(Icons.picture_in_picture)),
                   ));
