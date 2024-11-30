@@ -35,7 +35,9 @@ class _VideoPlayerState extends State<Videoplayer> {
   @override
   Widget build(BuildContext context) {
     return ConstrainedBox(
-      constraints: BoxConstraints(maxWidth: 1000.0, maxHeight: 1000.0),
+      constraints: BoxConstraints(
+          maxWidth: MediaQuery.of(context).size.width,
+          maxHeight: MediaQuery.of(context).size.height),
       child: LayoutBuilder(
         builder: (context, constraints) {
           double w = constraints.maxWidth - 32.0;

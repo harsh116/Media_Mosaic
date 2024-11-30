@@ -24,6 +24,7 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   int _counter = 0;
+  // bool isVideoPageMounted
 
   void _incrementCounter() {
     setState(() {
@@ -38,6 +39,10 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
+    // if (ModalRoute.of(context)!.settings.name != null) {
+    //   print('currentRoute: ${ModalRoute.of(context)!.settings.name}');
+    //   // setState(() => {});
+    // }
     // This method is rerun every time setState is called, for instance as done
     // by the _incrementCounter method above.
     //
@@ -45,41 +50,50 @@ class _MyHomePageState extends State<MyHomePage> {
     // fast, so that you can just rebuild anything that needs updating rather
     // than having to individually change instances of widgets.
     return Scaffold(
-      appBar: AppBar(
-        // TRY THIS: Try changing the color here to a specific color (to
-        // Colors.amber, perhaps?) and trigger a hot reload to see the AppBar
-        // change color while the other colors stay the same.
-        backgroundColor: Theme.of(context).colorScheme.primary,
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
-        title: Text(widget.title),
-        centerTitle: true,
-        bottomOpacity: 0.2,
-      ),
-      body: SingleChildScrollView(
-        scrollDirection: Axis.horizontal,
-        child: Center(
-          // Center is a layout widget. It takes a single child and positions it
-          // in the middle of the parent.
+        appBar: AppBar(
+          // TRY THIS: Try changing the color here to a specific color (to
+          // Colors.amber, perhaps?) and trigger a hot reload to see the AppBar
+          // change color while the other colors stay the same.
+          backgroundColor: Theme.of(context).colorScheme.primary,
+          // Here we take the value from the MyHomePage object that was created by
+          // the App.build method, and use it to set our appbar title.
+          title: Text(widget.title),
+          centerTitle: true,
+          bottomOpacity: 0.2,
+        ),
+        body: SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          child: Center(
+            // Center is a layout widget. It takes a single child and positions it
+            // in the middle of the parent.
 
-          child: Container(
-            width: MediaQuery.sizeOf(context).width > (Constants.carWidth + 20)
-                ? MediaQuery.sizeOf(context).width
-                : 320,
-            height: double.infinity,
-            margin: EdgeInsets.symmetric(horizontal: 16, vertical: 32),
-            // color: Colors.yellow,
-            child: Flex(
-              direction: Axis.horizontal,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: <Widget>[
-                customCard.Card(title: 'Numb'),
-              ],
+            child: Container(
+              width:
+                  MediaQuery.sizeOf(context).width > (Constants.carWidth + 20)
+                      ? MediaQuery.sizeOf(context).width
+                      : 320,
+              height: double.infinity,
+              margin: EdgeInsets.symmetric(horizontal: 16, vertical: 32),
+              // color: Colors.yellow,
+              child: Flex(
+                direction: Axis.horizontal,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: <Widget>[
+                  customCard.Card(title: 'Numb'),
+                ],
+              ),
             ),
           ),
         ),
-      ),
-    );
+        floatingActionButton: FloatingActionButton(
+          onPressed: () {
+            // if (ModalRoute.of(context)!.settings.name != null) {
+            print('currentRoute: ${ModalRoute.of(context)!.settings.name}');
+            // setState(() => {});
+            // }
+          },
+          child: Icon(Icons.add),
+        ));
   }
 }
