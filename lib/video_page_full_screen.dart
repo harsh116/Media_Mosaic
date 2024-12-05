@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import './models/screen_arguments.dart';
 import './videoplayer.dart';
 import './homepage.dart';
-import './pipview_custom.dart';
 
 class VideoPageFullScreen extends StatefulWidget {
   final ScreenArguments args;
@@ -116,8 +115,8 @@ class _VideoPageFullScreenState extends State<VideoPageFullScreen> {
                           // setState(() => isPIPMode = true);
                           // PIPViewCustom.of(context)!.presentBelow(
                           //     const MyHomePage(title: 'playlist'));
-                          PIPViewCustom.of(context)!.presentBelow(
-                              widget.homepageState!, widget.homepageContext);
+                          // PIPViewCustom.of(context)!.presentBelow(
+                          //     widget.homepageState!, widget.homepageContext);
                           // PIPViewCustom.of(context)!
                           //     .presentBelow(null);
                         },
