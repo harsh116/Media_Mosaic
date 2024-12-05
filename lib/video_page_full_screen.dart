@@ -8,14 +8,21 @@ import './homepage.dart';
 class VideoPageFullScreen extends StatefulWidget {
   final ScreenArguments args;
   final bool isFloating;
-  Widget? homepageState;
-  final BuildContext homepageContext;
-  VideoPageFullScreen(
-      {super.key,
-      required this.args,
-      required this.isFloating,
-      this.homepageState,
-      required this.homepageContext});
+  final bool isVideoPlaying;
+  final void Function() enablePIPmode;
+  final void Function() closeVideo;
+  // Widget? homepageState;
+  // final BuildContext homepageContext;
+  VideoPageFullScreen({
+    super.key,
+    required this.args,
+    required this.isFloating,
+    required this.enablePIPmode,
+    required this.isVideoPlaying,
+    required this.closeVideo,
+    // this.homepageState,
+    // required this.homepageContext
+  });
   @override
   State<VideoPageFullScreen> createState() => _VideoPageFullScreenState();
 }
@@ -24,6 +31,7 @@ class _VideoPageFullScreenState extends State<VideoPageFullScreen> {
   var lyrics;
   @override
   Widget build(BuildContext context) {
+    // print('isvideoplaying fullscreen dart: ${widget.isVideoPlaying}');
     bool isFloating = widget.isFloating;
     // bool isFloating = false;
 
@@ -32,7 +40,16 @@ class _VideoPageFullScreenState extends State<VideoPageFullScreen> {
         appBar: isFloating
             ? null
             : AppBar(
-                title: Text(widget.args.title),
+                title: Row(
+                  children: [
+                    IconButton(
+                      icon: Icon(Icons.arrow_back_ios),
+                      onPressed: widget.closeVideo,
+                    ),
+                    SizedBox(width: 10),
+                    Text(widget.args.title),
+                  ],
+                ),
               ),
         body: Column(
           // crossAxisAlignment: CrossAxisAlignment.start,
@@ -41,8 +58,10 @@ class _VideoPageFullScreenState extends State<VideoPageFullScreen> {
               flex: 1,
               child: Center(
                 child: Videoplayer(
-                    url:
-                        'https://user-images.githubusercontent.com/28951144/229373720-14d69157-1a56-4a78-a2f4-d7a134d7c3e9.mp4'),
+                  url:
+                      'https://user-images.githubusercontent.com/28951144/229373720-14d69157-1a56-4a78-a2f4-d7a134d7c3e9.mp4',
+                  isVideoPlaying: widget.isVideoPlaying,
+                ),
               ),
             ),
             widget.args.lyrics != null && !isFloating
@@ -119,6 +138,7 @@ class _VideoPageFullScreenState extends State<VideoPageFullScreen> {
                           //     widget.homepageState!, widget.homepageContext);
                           // PIPViewCustom.of(context)!
                           //     .presentBelow(null);
+                          widget.enablePIPmode();
                         },
                         child: const Icon(Icons.picture_in_picture)),
                   ));

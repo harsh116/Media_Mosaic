@@ -20,27 +20,6 @@ class _VideoPageState extends State<Videopage> {
 
   @override
   Widget build(BuildContext context) {
-    // PictureInPicture.startPiP(
-    //   pipWidget: Videoplayer(
-    //       url:
-    //           'https://user-images.githubusercontent.com/28951144/229373720-14d69157-1a56-4a78-a2f4-d7a134d7c3e9.mp4'),
-    // );
-
-    // PictureInPicture.updatePiPParams(
-    //   pipParams: PiPParams(
-    //     // pipWindowHeight: 144,
-    //     // pipWindowWidth: 256,
-    //     bottomSpace: 64,
-    //     leftSpace: 64,
-    //     rightSpace: 64,
-    //     topSpace: 64,
-    //     // maxSize: Size(256, 144),
-    //     minSize: const Size(144, 108),
-    //     movable: true,
-    //     resizable: true,
-    //     initialCorner: PIPViewCorner.bottomLeft,
-    //   ),
-    // );
     final ScreenArguments args =
         ModalRoute.of(context)!.settings.arguments as ScreenArguments;
     // final lyrics = ModalRoute.of(context)!.settings.arguments as ScreenArgumentsl
@@ -50,8 +29,6 @@ class _VideoPageState extends State<Videopage> {
     return VideoPageFullScreen(
       args: args,
       isFloating: isFloating,
-      homepageState: widget.homepageState,
-      homepageContext: args.homepageContext,
     );
   }
 }

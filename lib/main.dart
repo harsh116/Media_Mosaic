@@ -3,7 +3,7 @@ import 'package:media_kit/media_kit.dart';
 import 'package:flutter_in_app_pip/flutter_in_app_pip.dart';
 
 import './homepage.dart';
-import './videopage.dart';
+// import './videopage.dart';
 
 // import './card.dart' as customCard;
 
@@ -52,17 +52,17 @@ class _MyAppState extends State<MyApp> {
         ),
         useMaterial3: true,
       ),
-      // home: const MyHomePage(title: 'Playlist'),
-      initialRoute: '/',
-      routes: {
-        '/': (context) {
-          // setState(() =>
-          homepageState = const MyHomePage(title: 'Playlist');
-          // );
-          return homepageState!;
-        },
-        '/video': (context) => Videopage(homepageState: homepageState),
-      },
+      home: const MyHomePage(title: 'Playlist'),
+      // initialRoute: '/',
+      // routes: {
+      //   '/': (context) {
+      //     // setState(() =>
+      //     homepageState = const MyHomePage(title: 'Playlist');
+      //     // );
+      //     return homepageState!;
+      //   },
+      //   '/video': (context) => Videopage(homepageState: homepageState),
+      // },
     );
   }
 }
