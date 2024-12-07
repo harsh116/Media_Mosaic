@@ -17,7 +17,13 @@ class _VideoPlayerState extends State<Videoplayer> {
   // bool stateToggle = widget.stateToggle;
 
   final Player _player = Player();
-  late final VideoController _controller = VideoController(_player);
+  late final VideoController _controller = VideoController(
+    _player,
+    // configuration: const VideoControllerConfiguration(
+    //     enableHardwareAcceleration: true,
+    //     hwdec: "auto",
+    //     androidAttachSurfaceAfterVideoParameters: true),
+  );
 
   @override
   void initState() {
@@ -70,7 +76,7 @@ class _VideoPlayerState extends State<Videoplayer> {
           return Stack(
             children: [
               Video(
-                pauseUponEnteringBackgroundMode: false,
+                pauseUponEnteringBackgroundMode: true,
                 width: w,
                 height: h,
                 fill: Colors.grey,

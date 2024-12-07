@@ -5,6 +5,87 @@ import './models/screen_arguments.dart';
 import './videoplayer.dart';
 import './homepage.dart';
 
+enum DescriptionType { Description, Lyrics }
+
+class DescriptionBox extends StatefulWidget {
+  final DescriptionType descriptionType;
+  String? descriptionContent;
+
+  DescriptionBox(
+      {super.key, required this.descriptionType, this.descriptionContent});
+
+  @override
+  State<DescriptionBox> createState() => _DescriptionBoxState();
+}
+
+class _DescriptionBoxState extends State<DescriptionBox> {
+  @override
+  Widget build(BuildContext context) {
+    String descriptionTypeString = "";
+
+    switch (widget.descriptionType) {
+      case DescriptionType.Description:
+        descriptionTypeString = "Description";
+        break;
+      case DescriptionType.Lyrics:
+        descriptionTypeString = "Lyrics";
+        break;
+
+      default:
+    }
+
+    return Column(
+        // crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            margin: EdgeInsets.only(bottom: 20),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(descriptionTypeString,
+                    // textAlign: TextAlign.end,
+                    textAlign: TextAlign.left,
+                    style: TextStyle(
+                      color: Theme.of(context).colorScheme.inversePrimary,
+                      fontSize: 20,
+                      // backgroundColor: Colors.grey,
+                    )),
+                const SizedBox(width: 10),
+                IconButton(icon: Icon(Icons.edit), onPressed: () => {}),
+              ],
+            ),
+          ),
+
+          // Scrollable part with a single Text widget
+          Expanded(
+            child: SingleChildScrollView(
+                // child: widget.args.lyrics!=null?Text(
+                //   widget.args.lyrics ,
+                //   // style: TextStyle(fontSize: 16),
+                // ):Container() ,
+
+                child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  widget.descriptionContent != null
+                      ? widget.descriptionContent!
+                      // : "Tap + button to add lyrics here",
+                      : "No ${descriptionTypeString} added. Tap edit button to add ${descriptionTypeString}",
+                  style: TextStyle(fontSize: 16),
+                ),
+                // lyrics == null
+                //     ? IconButton(
+                //         icon: Icon(Icons.add),
+                //         onPressed: () => {})
+                //     : Container(),
+              ],
+            )),
+          ),
+        ]);
+  }
+}
+
 class VideoPageFullScreen extends StatefulWidget {
   final ScreenArguments args;
   final bool isFloating;
@@ -28,9 +109,20 @@ class VideoPageFullScreen extends StatefulWidget {
 }
 
 class _VideoPageFullScreenState extends State<VideoPageFullScreen> {
-  var lyrics;
+  String? lyrics;
+  String? description;
+  // String ch="1";
+  DescriptionType descriptionType = DescriptionType.Lyrics;
+
   @override
   Widget build(BuildContext context) {
+    // List<Map<String, DescriptionType>> descriptionTypes = [
+    //   {'Lyrics': DescriptionType.Lyrics},
+    //   {'Description': DescriptionType.Description},
+    // ];
+
+    List<String> descriptionTypes = ['Lyrics', 'Description'];
+
     // print('isvideoplaying fullscreen dart: ${widget.isVideoPlaying}');
     bool isFloating = widget.isFloating;
     // bool isFloating = false;
@@ -64,44 +156,99 @@ class _VideoPageFullScreenState extends State<VideoPageFullScreen> {
                 ),
               ),
             ),
-            widget.args.lyrics != null && !isFloating
+            // widget.args.lyrics != null &&
+            !isFloating
                 ? Expanded(
                     flex: 1,
-                    child: Container(
+                    child: ConstrainedBox(
+                      constraints: BoxConstraints(maxWidth: 1000),
+                      child: Stack(
+                        alignment: Alignment.center,
+                        children: [
+                          Container(
+                            padding: EdgeInsets.all(10),
+                            decoration: BoxDecoration(
+                              color: const Color.fromRGBO(255, 255, 255, 0.1),
+                              border: Border.all(
+                                  color: Theme.of(context).colorScheme.primary),
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(10)),
+                            ),
+                            width: MediaQuery.of(context).size.width,
+                            height: MediaQuery.of(context).size.height,
 
-                        // height: 200,
-                        margin:
-                            EdgeInsets.symmetric(horizontal: 16, vertical: 32),
-                        child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Container(
-                                margin: EdgeInsets.only(bottom: 20),
-                                child: Text('Lyrics',
-                                    // textAlign: TextAlign.end,
-                                    textAlign: TextAlign.left,
-                                    style: TextStyle(
-                                      color: Theme.of(context)
-                                          .colorScheme
-                                          .inversePrimary,
-                                      fontSize: 20,
-                                      // backgroundColor: Colors.grey,
-                                    )),
-                              ),
-                              // Scrollable part with a single Text widget
-                              Expanded(
-                                child: SingleChildScrollView(
-                                    // child: widget.args.lyrics!=null?Text(
-                                    //   widget.args.lyrics ,
-                                    //   // style: TextStyle(fontSize: 16),
-                                    // ):Container() ,
+                            // height: 200,
+                            margin: EdgeInsets.symmetric(
+                                horizontal: 16, vertical: 32),
+                            child: Builder(builder: (context) {
+                              if (descriptionType == DescriptionType.Lyrics)
+                                return DescriptionBox(
+                                    descriptionType: descriptionType,
+                                    descriptionContent: lyrics);
+                              else if (descriptionType ==
+                                  DescriptionType.Description)
+                                return DescriptionBox(
+                                    descriptionType: descriptionType,
+                                    descriptionContent: "Description of this");
+                              else
+                                return Container();
+                            }),
+                          ),
+                          Positioned(
+                            bottom: 20,
+                            child: Container(
+                              decoration: BoxDecoration(
+                                  color: Color.fromRGBO(0, 0, 0, 0.5)),
+                              child: Row(
+                                children: descriptionTypes
+                                    .map((e) => Container(
+                                          decoration: BoxDecoration(
+                                            border: Border.all(
+                                                color: Theme.of(context)
+                                                    .colorScheme
+                                                    .primary),
+                                          ),
+                                          child: TextButton(
+                                              style: TextButton.styleFrom(
+                                                shape: LinearBorder(),
+                                              ),
+                                              child: Text(
+                                                e,
+                                                style: TextStyle(
+                                                    fontSize: 12,
+                                                    color: Theme.of(context)
+                                                        .colorScheme
+                                                        .inversePrimary),
+                                              ),
+                                              onPressed: () {
+                                                if (e == 'Lyrics')
+                                                  setState(() =>
+                                                      descriptionType =
+                                                          DescriptionType
+                                                              .Lyrics);
+                                                if (e == 'Description') {
+                                                  setState(() =>
+                                                      descriptionType =
+                                                          DescriptionType
+                                                              .Description);
+                                                }
+                                              }),
+                                        ))
+                                    .toList(),
+                                // children: [
 
-                                    child: Text(
-                                  lyrics,
-                                  style: TextStyle(fontSize: 16),
-                                )),
+                                //   TextButton(
+                                //       child: Text('Lyrics'), onPressed: () => {}),
+                                //   TextButton(
+                                //       child: Text('Description'),
+                                //       onPressed: () => {}),
+                                // ],
                               ),
-                            ])),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
                   )
                 : Container(),
           ],
