@@ -1,4 +1,7 @@
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
+// import 'package:get_thumbnail_video/video_thumbnail.dart';
 
 import './models/screen_arguments.dart';
 import './lyrics.dart';
@@ -6,10 +9,18 @@ import './lyrics.dart';
 import './constants.dart' as Constants;
 
 class Card extends StatefulWidget {
-  Card({super.key, required this.title, required this.onClickVideo});
+  Card(
+      {super.key,
+      required this.title,
+      required this.onClickVideo,
+      required this.arg});
   final String title;
+  final ScreenArguments arg;
 
-  void Function(String, {String? lyrics}) onClickVideo;
+  void Function(String,
+      {String? lyrics,
+      String? description,
+      required String vidPath}) onClickVideo;
 
   @override
   State<Card> createState() => _CardState();
@@ -18,18 +29,33 @@ class Card extends StatefulWidget {
 class _CardState extends State<Card> {
   String? lyrics;
 
+  Uint8List? uint8list;
+
+  // void loadThumbnail() async {
+  //   uint8list = await VideoThumbnail.thumbnailData(
+  //     video: widget.arg.vidPath,
+  //     maxWidth: Constants.carWidth.toInt(),
+  //   );
+  //   setState(() => {});
+  // }
+
   @override
   void initState() {
-    for (Lyric lyric in lyricsList) {
-      if (widget.title == lyric.title) {
-        setState(() {
-          lyrics = lyric.lyrics;
-        });
-      }
-    }
-
-    setState(() {});
+    // loadThumbnail();
   }
+
+  // @override
+  // void initState() {
+  //   for (Lyric lyric in lyricsList) {
+  //     if (widget.title == lyric.title) {
+  //       setState(() {
+  //         lyrics = lyric.lyrics;
+  //       });
+  //     }
+  //   }
+
+  //   setState(() {});
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -57,8 +83,11 @@ class _CardState extends State<Card> {
           children: <Widget>[
             FittedBox(
               child: Column(children: [
-                Image.network(
-                  'https://i.ytimg.com/vi/kXYiU_JCYtU/hq720.jpg?sqp=-oaymwEhCK4FEIIDSFryq4qpAxMIARUAAAAAGAElAADIQj0AgKJD&rs=AOn4CLC5i_i2I7iyr9Nvb20q1S6kN1uQEQ',
+                // Image.memory(
+                //   uint8list!,
+                // ),
+                Image.asset(
+                  'asset/black-background.png',
                   width: carWidth,
                   height: imageHeight,
                   fit: BoxFit.cover,
@@ -108,7 +137,11 @@ class _CardState extends State<Card> {
               clipBehavior: Clip.hardEdge,
               onPressed: () {
                 print('overlay pressed');
-                widget.onClickVideo(widget.title, lyrics: lyrics);
+                widget.onClickVideo(widget.title,
+                    lyrics: widget.arg.lyrics,
+                    description: widget.arg.description,
+                    vidPath: widget.arg.vidPath);
+
                 // Navigator.pushNamed(
                 //   context,
                 //   '/video',

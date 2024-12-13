@@ -30,15 +30,28 @@ class _VideoPlayerState extends State<Videoplayer> {
     super.initState();
     _player.open(
       Media(widget.url),
-      play: false,
+      play: true,
     );
   }
 
   @override
   void didUpdateWidget(Videoplayer oldWidget) {
     super.didUpdateWidget(oldWidget);
+
+    // toggle play pause of video when isVideoPlaying value changes
     if (oldWidget.isVideoPlaying != widget.isVideoPlaying) {
       _player.playOrPause();
+    }
+
+    // if the url is changed then unload previous media and mount new one
+    if (oldWidget.url != widget.url) {
+      _player.stop();
+      _player.open(
+        Media(widget.url),
+        play: true,
+      );
+
+      setState(() => {});
     }
   }
 

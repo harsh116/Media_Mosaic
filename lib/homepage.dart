@@ -1,13 +1,24 @@
+import 'dart:io';
+import 'dart:async';
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:permission_handler/permission_handler.dart';
+import 'package:file_picker/file_picker.dart';
 
 import './card.dart' as customCard;
 // import './video_page_full_screen.dart';
 import './models/screen_arguments.dart';
 import './constants.dart' as Constants;
 import './pip_video.dart';
+import './file_manager.dart';
+import 'utils.dart';
+import 'delete_overlay.dart';
 
 class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
+  const MyHomePage(
+      {super.key, required this.title, required this.playlistName});
 
   // This widget is the home page of your application. It is stateful, meaning
   // that it has a State object (defined below) that contains fields that affect
@@ -19,6 +30,7 @@ class MyHomePage extends StatefulWidget {
   // always marked "final".
 
   final String title;
+  final String playlistName;
 
   @override
   State<MyHomePage> createState() => _MyHomePageState();
@@ -26,9 +38,85 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   bool isVideoPageOpen = false;
-  ScreenArguments args = ScreenArguments("");
+  ScreenArguments args = ScreenArguments("", vidPath: '');
+  List<ScreenArguments> videoDataList = [];
+  ScreenArguments selectedVideoData = ScreenArguments("", vidPath: "");
+
+  bool deleteMode = false;
+  bool editMode = false;
+
+  bool isDeleteOverLay = false;
+
+  PopupMenuItem buildPopMenuItem(
+      String title, IconData icondata, Function() onTap) {
+    return PopupMenuItem(
+      child: Row(
+        children: [
+          Icon(
+            icondata,
+          ),
+          Text(title),
+        ],
+      ),
+      onTap: onTap,
+    );
+  }
+
+  // List<String>? videoNames;
 
   // bool isVideoPageMounted
+  //
+
+  // void getPath() async {
+  //   if (Platform.isAndroid) {
+  //     await storagePermissions();
+  //     ExternalFileManager efm = ExternalFileManager();
+  //     print('path: ${await efm.localPath}');
+
+  //     efm.writeCounter(8);
+  //     print('${await efm.readCounter()}');
+  //   } else
+  //   // if(Platform.isLinux || Platform.isWindows )
+  //   {
+  //     FileManager fm = FileManager();
+
+  //     print('path: ${await fm.localPath}');
+  //     fm.writeCounter(3);
+  //     print('counter: ${await fm.readCounter()}');
+  //   }
+
+  //   // FileManager fm = FileManager();
+
+  //   // print('path: ${await fm._localPath}');
+  //   // fm.writeCounter(3);
+  //   // print('counter: ${await fm.readCounter()}');
+  //   //
+  // }
+
+  void initializeVideos() async {
+    // if (Platform.isAndroid) {
+    //   await storagePermissions();
+    //   ExternalFileManager efm = ExternalFileManager();
+    //   print('path: ${await efm.localPath}');
+    //   efm.createPlayListDirectories('Weeknd');
+    // } else
+    // // if(Platform.isLinux || Platform.isWindows )
+    // {
+    FileManager fm = FileManager();
+
+    print('path: ${await fm.localPath}');
+    fm.createPlayListDirectories(widget.playlistName);
+    videoDataList = await getvideoData(fm, widget.playlistName);
+    setState(() => {});
+    // }
+  }
+
+  @override
+  void initState() {
+    // getPath();
+    initializeVideos();
+    // print();
+  }
 
   void _incrementCounter() {
     setState(() {
@@ -40,18 +128,74 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
-  void openVideo(String title, {String? lyrics}) {
+  void openVideo(String title,
+      {String? lyrics, String? description, required String vidPath}) {
     setState(() {
+      // bringing the delete overlay and reseeting delete mode back to false
+      if (deleteMode == true) {
+        isDeleteOverLay = true;
+        selectedVideoData = ScreenArguments(title,
+            vidPath: vidPath, lyrics: lyrics, description: description);
+
+        return;
+      }
+      print('openVideopath: $vidPath');
+      // await closeVideo();
       isVideoPageOpen = true;
-      args = ScreenArguments(title, lyrics: lyrics);
+      args = ScreenArguments(title,
+          lyrics: lyrics, vidPath: vidPath, description: description);
     });
   }
 
   void closeVideo() {
     setState(() {
       isVideoPageOpen = false;
-      args = ScreenArguments("");
+      args = ScreenArguments("", vidPath: "");
     });
+  }
+
+  void deleteVideo(bool isDelete) async {
+    if (isDelete) {
+      FileManager fm = FileManager();
+      await fm.deleteVideoAll(selectedVideoData.title, widget.playlistName);
+      initializeVideos();
+    }
+
+    // String vidPath = selectedVideoData.vidPath;
+    // String lyricsPath = ''
+
+    selectedVideoData = ScreenArguments('', vidPath: '');
+    isDeleteOverLay = false;
+    setState(() => {});
+  }
+
+  Future<void> addVideos() async {
+    FilePickerResult? result = await FilePicker.platform.pickFiles(
+        allowMultiple: true,
+        type: FileType.custom,
+        allowedExtensions: [
+          "mp3", "wav", "ogg", "flac", "aac", "wma", "m4a", "aiff",
+          "opus", // Audio
+          "mp4", "mkv", "avi", "mov", "wmv", "flv", "webm", "mpeg", "mpg",
+          "3gp", "ogv", "ts", "m2ts", // Video
+        ]);
+    if (result != null) {
+      List<PlatformFile> files = result.files;
+      for (PlatformFile file in files) {
+        FileManager fm = FileManager();
+        String vidname = extractFileNameWithoutExtension(file.path!);
+
+        // corrected now,  to be corrected, file.path is video of source not the playlistlib folder
+        ScreenArguments videoData = ScreenArguments(vidname,
+            vidPath: await fm.getVideoFilePath(vidname, widget.playlistName));
+        videoDataList.add(videoData);
+
+        fm.copyFileToDestination(file.path!,
+            '${widget.playlistName}/videos/${extractFileName(file.path!)}');
+      }
+      setState(() => {});
+      initializeVideos();
+    }
   }
 
   @override
@@ -70,16 +214,41 @@ class _MyHomePageState extends State<MyHomePage> {
       children: [
         Scaffold(
           appBar: AppBar(
-            // TRY THIS: Try changing the color here to a specific color (to
-            // Colors.amber, perhaps?) and trigger a hot reload to see the AppBar
-            // change color while the other colors stay the same.
-            backgroundColor: Theme.of(context).colorScheme.primary,
-            // Here we take the value from the MyHomePage object that was created by
-            // the App.build method, and use it to set our appbar title.
-            title: Text(widget.title),
-            centerTitle: true,
-            bottomOpacity: 0.2,
-          ),
+              // TRY THIS: Try changing the color here to a specific color (to
+              // Colors.amber, perhaps?) and trigger a hot reload to see the AppBar
+              // change color while the other colors stay the same.
+              backgroundColor: Theme.of(context).colorScheme.primary,
+              // Here we take the value from the MyHomePage object that was created by
+              // the App.build method, and use it to set our appbar title.
+              title: Text(widget.title),
+              centerTitle: true,
+              bottomOpacity: 0.2,
+              actions: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    // IconButton(
+                    //     icon: Icon(Icons.more_vert), onPressed: () => { }),
+                    (editMode || deleteMode)
+                        ? IconButton(
+                            icon: Icon(Icons.close),
+                            onPressed: () {
+                              editMode = deleteMode = false;
+                              setState(() => {});
+                            })
+                        : PopupMenuButton(
+                            itemBuilder: (context) => [
+                              buildPopMenuItem(
+                                  'Add Videos', Icons.add, addVideos),
+                              buildPopMenuItem('Delete Mode', Icons.delete, () {
+                                deleteMode = true;
+                                setState(() => {});
+                              }),
+                            ],
+                          )
+                  ],
+                )
+              ]),
           body: SingleChildScrollView(
             scrollDirection: Axis.horizontal,
             child: Center(
@@ -105,16 +274,24 @@ class _MyHomePageState extends State<MyHomePage> {
                   child: SingleChildScrollView(
                     child: Center(
                       child: Wrap(
-                          spacing: 40,
-                          runSpacing: 20,
-                          direction: Axis.horizontal,
-                          crossAxisAlignment: WrapCrossAlignment.start,
-                          children: [
-                            for (int i = 0; i < 10; i++)
-                              customCard.Card(
-                                  title: 'Numb ${i + 1}',
-                                  onClickVideo: openVideo),
-                          ]),
+                        spacing: 40,
+                        runSpacing: 20,
+                        direction: Axis.horizontal,
+                        crossAxisAlignment: WrapCrossAlignment.start,
+                        children: videoDataList!.map((videoData) {
+                          return customCard.Card(
+                            title: videoData.title,
+                            arg: videoData,
+                            onClickVideo: openVideo,
+                          );
+                        }).toList(),
+                        // children: [
+                        //   for (int i = 0; i < 10; i++)
+                        //     customCard.Card(
+                        //         title: 'Numb ${i + 1}',
+                        //         onClickVideo: openVideo),
+                        // ],
+                      ),
                     ),
                   )),
             ),
@@ -129,6 +306,7 @@ class _MyHomePageState extends State<MyHomePage> {
           //   child: Icon(Icons.add),
           // ),
         ),
+        isDeleteOverLay ? DeleteOverlay(deleteVideo: deleteVideo) : Container(),
         isVideoPageOpen
             ? PIPVideo(args: args, closeVideo: closeVideo)
             : Container(),

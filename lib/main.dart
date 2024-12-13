@@ -26,7 +26,8 @@ class _MyAppState extends State<MyApp> {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return PiPMaterialApp(
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
       title: 'Flutter Demo',
       theme: ThemeData(
         // This is the theme of your application.
@@ -52,7 +53,7 @@ class _MyAppState extends State<MyApp> {
         ),
         useMaterial3: true,
       ),
-      home: const MyHomePage(title: 'Playlist'),
+      home: const MyHomePage(title: 'Playlist', playlistName: 'Linkin Park'),
       // initialRoute: '/',
       // routes: {
       //   '/': (context) {

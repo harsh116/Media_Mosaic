@@ -151,7 +151,8 @@ class _VideoPageFullScreenState extends State<VideoPageFullScreen> {
               child: Center(
                 child: Videoplayer(
                   url:
-                      'https://user-images.githubusercontent.com/28951144/229373720-14d69157-1a56-4a78-a2f4-d7a134d7c3e9.mp4',
+                      // 'https://user-images.githubusercontent.com/28951144/229373720-14d69157-1a56-4a78-a2f4-d7a134d7c3e9.mp4',
+                      widget.args.vidPath,
                   isVideoPlaying: widget.isVideoPlaying,
                 ),
               ),
