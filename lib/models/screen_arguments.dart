@@ -8,8 +8,13 @@ class ScreenArguments {
 
   String? description;
 
+  String? thumbnailPath;
+
   ScreenArguments(this.title,
-      {this.lyrics, required this.vidPath, this.description});
+      {this.lyrics,
+      required this.vidPath,
+      this.description,
+      this.thumbnailPath});
 }
 
 class Lyric {

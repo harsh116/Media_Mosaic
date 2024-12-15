@@ -17,7 +17,12 @@ Future<List<ScreenArguments>> getvideoData(
 
     String lyricsPath = '${rootPath}/$playlistName/lyrics/$vidName.txt';
     String descriptionPath =
-        '${rootPath}/$playlistName/description/$vidName.txt';
+        '${rootPath}/$playlistName/descriptions/$vidName.txt';
+    // String thumbnailPath = '${rootPath}/$playlistName/thumbnails/$vidName.txt';
+    String thumbnailPath = getFilePathWithExtension(
+        '${rootPath}/$playlistName/thumbnails', vidName);
+
+    // print('thumbnailPath: $thumbnailPath');
 
     String? lyrics;
     String? description;
@@ -38,8 +43,13 @@ Future<List<ScreenArguments>> getvideoData(
       print(e.toString());
     }
 
+    bool isThumbnailExists = File(thumbnailPath).existsSync();
+
     return ScreenArguments(vidName,
-        vidPath: vidPath, lyrics: lyrics, description: description);
+        vidPath: vidPath,
+        lyrics: lyrics,
+        description: description,
+        thumbnailPath: isThumbnailExists ? thumbnailPath : null);
   }).toList();
 
   return videoDataList;
@@ -61,8 +71,15 @@ String extractFileNameWithoutExtension(String vidPath) {
   return vidName;
 }
 
+String extractPlaylistName(String vidPath) {
+  String vidName =
+      RegExp(r'PlayList_Lib/(.*)/.*/.*').firstMatch(vidPath)!.group(1) ?? '';
+  print('playlist name: $vidName');
+  return vidName;
+}
+
 String extractFileName(String vidPath) {
-  String vidName = RegExp(r'.+/(.+\..+)').firstMatch(vidPath)!.group(1) ?? '';
+  String vidName = RegExp(r'.+/(.+\..+)').firstMatch(vidPath)?.group(1) ?? '';
   return vidName;
 }
 
@@ -96,8 +113,7 @@ Future<List<String>> getvideoDescriptions(
   return dirPaths;
 }
 
-Future<String> getFilePathWithExtension(
-    String parentDirectory, String filename) async {
+String getFilePathWithExtension(String parentDirectory, String filename) {
   Directory dir = Directory(parentDirectory);
 
   List<FileSystemEntity> entities = dir.listSync();

@@ -68,7 +68,8 @@ class _DescriptionBoxState extends State<DescriptionBox> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 Text(
-                  widget.descriptionContent != null
+                  widget.descriptionContent != null &&
+                          widget.descriptionContent!.length > 0
                       ? widget.descriptionContent!
                       // : "Tap + button to add lyrics here",
                       : "No ${descriptionTypeString} added. Tap edit button to add ${descriptionTypeString}",
@@ -128,6 +129,7 @@ class _VideoPageFullScreenState extends State<VideoPageFullScreen> {
     // bool isFloating = false;
 
     lyrics = widget.args.lyrics;
+    description = widget.args.description;
     return Scaffold(
         appBar: isFloating
             ? null
@@ -190,7 +192,7 @@ class _VideoPageFullScreenState extends State<VideoPageFullScreen> {
                                   DescriptionType.Description)
                                 return DescriptionBox(
                                     descriptionType: descriptionType,
-                                    descriptionContent: "Description of this");
+                                    descriptionContent: description);
                               else
                                 return Container();
                             }),

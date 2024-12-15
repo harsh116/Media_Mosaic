@@ -1,4 +1,5 @@
 import 'dart:typed_data';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 // import 'package:get_thumbnail_video/video_thumbnail.dart';
@@ -86,12 +87,19 @@ class _CardState extends State<Card> {
                 // Image.memory(
                 //   uint8list!,
                 // ),
-                Image.asset(
-                  'asset/black-background.png',
-                  width: carWidth,
-                  height: imageHeight,
-                  fit: BoxFit.cover,
-                ),
+                widget.arg.thumbnailPath != null
+                    ? Image.memory(
+                        File(widget.arg.thumbnailPath!).readAsBytesSync(),
+                        width: carWidth,
+                        height: imageHeight,
+                        fit: BoxFit.cover,
+                      )
+                    : Image.asset(
+                        'asset/black-background.png',
+                        width: carWidth,
+                        height: imageHeight,
+                        fit: BoxFit.cover,
+                      ),
                 Container(
                   width: carWidth,
 

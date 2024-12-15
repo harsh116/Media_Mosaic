@@ -50,6 +50,8 @@ class _MyAppState extends State<MyApp> {
           inversePrimary: Colors.blueGrey[50],
           primary: Colors.blueGrey.shade800,
           primaryContainer: Colors.grey.shade700,
+          // secondary: Colors.blueGrey.shade50,
+          // secondary: Colors.white,
         ),
         useMaterial3: true,
       ),

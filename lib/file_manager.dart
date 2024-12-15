@@ -117,14 +117,15 @@ class FileManager {
   }
 
   Future<void> copyFileToDestination(
-      String source, String relevativeDestination) async {
+      String source, String relevativeDestination,
+      {bool replaceMode = false}) async {
     String destination = '${await localPath}/$relevativeDestination';
     File file = File('$source');
 
     File destinationFile = File(destination);
 
     // if same filename exists then renaming current one
-    if (await destinationFile.exists()) {
+    if (await destinationFile.exists() && !replaceMode) {
       destination =
           '${extractParentDirectory(destination)}/${extractFileNameWithoutExtension(destination)}_1.${extractExtension(destination)}';
       print('changed filename : $destination');
@@ -132,10 +133,29 @@ class FileManager {
     file.copy(destination);
   }
 
-  Future<File> writeFile(String contents) async {
+  Future<void> renameFile(String filePath, String newPath) async {
+    File file = File(filePath);
+    file.rename(newPath);
+  }
+
+  // relativePath here path relative to localPath ie directory where all the files is stored so relative .../PlayList_Lib
+  Future<File> writeFile(String contents, String relativePath) async {
     final file = await _localFile;
     return file.writeAsString('$contents', mode: FileMode.write);
     // return file.
+  }
+
+  Future<void> writeLyricstoFile(
+      String lyrics, String title, String playlistName) async {
+    final file = File('${await localPath}/$playlistName/lyrics/$title.txt');
+    file.writeAsString(lyrics);
+  }
+
+  Future<void> writeDescriptiontoFile(
+      String description, String title, String playlistName) async {
+    final file =
+        File('${await localPath}/$playlistName/descriptions/$title.txt');
+    file.writeAsString(description);
   }
 
   Future<String> getVideoFilePath(String title, String playlistName) async {

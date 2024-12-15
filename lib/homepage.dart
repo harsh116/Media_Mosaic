@@ -15,6 +15,7 @@ import './pip_video.dart';
 import './file_manager.dart';
 import 'utils.dart';
 import 'delete_overlay.dart';
+import 'edit_overlay.dart';
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage(
@@ -46,6 +47,7 @@ class _MyHomePageState extends State<MyHomePage> {
   bool editMode = false;
 
   bool isDeleteOverLay = false;
+  bool isEditOverLay = false;
 
   PopupMenuItem buildPopMenuItem(
       String title, IconData icondata, Function() onTap) {
@@ -139,12 +141,34 @@ class _MyHomePageState extends State<MyHomePage> {
 
         return;
       }
+
+      if (editMode == true) {
+        isEditOverLay = true;
+        selectedVideoData = ScreenArguments(title,
+            vidPath: vidPath, lyrics: lyrics, description: description);
+
+        return;
+      }
+
       print('openVideopath: $vidPath');
       // await closeVideo();
       isVideoPageOpen = true;
       args = ScreenArguments(title,
           lyrics: lyrics, vidPath: vidPath, description: description);
     });
+  }
+
+  void editVideo(bool isEdit) {
+    print('Edit video');
+
+    if (isEdit) {
+      print('isEdit: true');
+      initializeVideos();
+    }
+
+    isEditOverLay = false;
+    selectedVideoData = ScreenArguments('', vidPath: '');
+    setState(() => {});
   }
 
   void closeVideo() {
@@ -244,6 +268,10 @@ class _MyHomePageState extends State<MyHomePage> {
                                 deleteMode = true;
                                 setState(() => {});
                               }),
+                              buildPopMenuItem('Edit Mode', Icons.edit, () {
+                                editMode = true;
+                                setState(() => {});
+                              }),
                             ],
                           )
                   ],
@@ -307,6 +335,9 @@ class _MyHomePageState extends State<MyHomePage> {
           // ),
         ),
         isDeleteOverLay ? DeleteOverlay(deleteVideo: deleteVideo) : Container(),
+        isEditOverLay
+            ? EditOverlay(editVideo: editVideo, videoData: selectedVideoData)
+            : Container(),
         isVideoPageOpen
             ? PIPVideo(args: args, closeVideo: closeVideo)
             : Container(),
