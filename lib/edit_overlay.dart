@@ -234,11 +234,13 @@ class _EditOverlayState extends State<EditOverlay> {
     // saving title of song
     FileManager fm = FileManager();
 
-    String newPath =
-        '${extractParentDirectory(widget.videoData.vidPath)}/${titleController.text}.${extractExtension(widget.videoData.vidPath)}';
+    fm.changeTitle(widget.videoData.title, playlistName, titleController.text);
 
-    // if(titleController.text)
-    await fm.renameFile(widget.videoData.vidPath, newPath);
+    // String newVidPath =
+    //     '${extractParentDirectory(widget.videoData.vidPath)}/${titleController.text}.${extractExtension(widget.videoData.vidPath)}';
+
+    // // if(titleController.text)
+    // await fm.renameFile(widget.videoData.vidPath, newVidPath);
 
     // changing video file
     if (selectedVidPath.length > 0) {

@@ -210,6 +210,40 @@ class FileManager {
     }
   }
 
+  // changing title means changing name of all respective files in the 4 folders
+  Future<void> changeTitle(
+      String oldTitle, String playlistName, String newTitle) async {
+    File lyricFile = File('${await getLyricFilePath(oldTitle, playlistName)}');
+    File videoFile = File('${await getVideoFilePath(oldTitle, playlistName)}');
+    // File videoFile = File();
+    File descriptionFile =
+        File('${await getDescriptionFilePath(oldTitle, playlistName)}');
+    File thumbnailFile =
+        File('${await getThumbnailFilePath(oldTitle, playlistName)}');
+
+    String newVidPath =
+        '${extractParentDirectory('${await getVideoFilePath(oldTitle, playlistName)}')}/${newTitle}.${extractExtension('${await getVideoFilePath(oldTitle, playlistName)}')}';
+    String newLyricPath =
+        '${extractParentDirectory('${await getLyricFilePath(oldTitle, playlistName)}')}/${newTitle}.${extractExtension('${await getLyricFilePath(oldTitle, playlistName)}')}';
+
+    String newDescriptionPath =
+        '${extractParentDirectory('${await getDescriptionFilePath(oldTitle, playlistName)}')}/${newTitle}.${extractExtension('${await getDescriptionFilePath(oldTitle, playlistName)}')}';
+
+    String newThumbnailPath =
+        '${extractParentDirectory('${await getThumbnailFilePath(oldTitle, playlistName)}')}/${newTitle}.${extractExtension('${await getThumbnailFilePath(oldTitle, playlistName)}')}';
+
+    videoFile.renameSync(newVidPath);
+    if (lyricFile.existsSync()) {
+      lyricFile.renameSync(newLyricPath);
+    }
+    if (descriptionFile.existsSync()) {
+      descriptionFile.renameSync(newDescriptionPath);
+    }
+    if (thumbnailFile.existsSync()) {
+      thumbnailFile.renameSync(newThumbnailPath);
+    }
+  }
+
   // deletes video only
   Future<void> deleteVideoOnly(String title, String playlistName) async {
     File videoFile = File('${await getVideoFilePath(title, playlistName)}');

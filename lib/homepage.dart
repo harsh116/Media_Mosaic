@@ -3,6 +3,7 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:file_picker/file_picker.dart';
@@ -16,6 +17,7 @@ import './file_manager.dart';
 import 'utils.dart';
 import 'delete_overlay.dart';
 import 'edit_overlay.dart';
+import 'info_overlay.dart';
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage(
@@ -45,9 +47,11 @@ class _MyHomePageState extends State<MyHomePage> {
 
   bool deleteMode = false;
   bool editMode = false;
+  bool infoMode = false;
 
   bool isDeleteOverLay = false;
   bool isEditOverLay = false;
+  bool isInfoOverLay = false;
 
   PopupMenuItem buildPopMenuItem(
       String title, IconData icondata, Function() onTap) {
@@ -57,11 +61,33 @@ class _MyHomePageState extends State<MyHomePage> {
           Icon(
             icondata,
           ),
+          SizedBox(width: 10),
           Text(title),
         ],
       ),
       onTap: onTap,
     );
+  }
+
+  bool _onKey(KeyEvent event) {
+    try {
+      final key = event.logicalKey.keyLabel;
+
+      if (event is KeyUpEvent) {
+        print('keyup event: $key');
+        if (key == "Escape") {
+          if (isDeleteOverLay || isEditOverLay || isInfoOverLay) {
+            cancelAllOverLays();
+          } else {
+            cancelAllModes();
+          }
+        }
+      }
+    } catch (e) {
+      print(e);
+    }
+
+    return false;
   }
 
   // List<String>? videoNames;
@@ -108,6 +134,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
     print('path: ${await fm.localPath}');
     fm.createPlayListDirectories(widget.playlistName);
+
     videoDataList = await getvideoData(fm, widget.playlistName);
     setState(() => {});
     // }
@@ -115,6 +142,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   void initState() {
+    ServicesBinding.instance.keyboard.addHandler(_onKey);
     // getPath();
     initializeVideos();
     // print();
@@ -144,6 +172,14 @@ class _MyHomePageState extends State<MyHomePage> {
 
       if (editMode == true) {
         isEditOverLay = true;
+        selectedVideoData = ScreenArguments(title,
+            vidPath: vidPath, lyrics: lyrics, description: description);
+
+        return;
+      }
+
+      if (infoMode == true) {
+        isInfoOverLay = true;
         selectedVideoData = ScreenArguments(title,
             vidPath: vidPath, lyrics: lyrics, description: description);
 
@@ -190,6 +226,16 @@ class _MyHomePageState extends State<MyHomePage> {
 
     selectedVideoData = ScreenArguments('', vidPath: '');
     isDeleteOverLay = false;
+    setState(() => {});
+  }
+
+  void cancelAllModes() {
+    editMode = deleteMode = infoMode = false;
+    setState(() => {});
+  }
+
+  void cancelAllOverLays() {
+    isDeleteOverLay = isEditOverLay = isInfoOverLay = false;
     setState(() => {});
   }
 
@@ -253,12 +299,11 @@ class _MyHomePageState extends State<MyHomePage> {
                   children: [
                     // IconButton(
                     //     icon: Icon(Icons.more_vert), onPressed: () => { }),
-                    (editMode || deleteMode)
+                    (editMode || deleteMode || infoMode)
                         ? IconButton(
                             icon: Icon(Icons.close),
                             onPressed: () {
-                              editMode = deleteMode = false;
-                              setState(() => {});
+                              cancelAllModes();
                             })
                         : PopupMenuButton(
                             itemBuilder: (context) => [
@@ -270,6 +315,10 @@ class _MyHomePageState extends State<MyHomePage> {
                               }),
                               buildPopMenuItem('Edit Mode', Icons.edit, () {
                                 editMode = true;
+                                setState(() => {});
+                              }),
+                              buildPopMenuItem('Info Mode', Icons.info, () {
+                                infoMode = true;
                                 setState(() => {});
                               }),
                             ],
@@ -337,6 +386,14 @@ class _MyHomePageState extends State<MyHomePage> {
         isDeleteOverLay ? DeleteOverlay(deleteVideo: deleteVideo) : Container(),
         isEditOverLay
             ? EditOverlay(editVideo: editVideo, videoData: selectedVideoData)
+            : Container(),
+        isInfoOverLay
+            ? InfoOverlay(
+                videoData: selectedVideoData,
+                closeInfoOverlay: () {
+                  isInfoOverLay = false;
+                  setState(() => {});
+                })
             : Container(),
         isVideoPageOpen
             ? PIPVideo(args: args, closeVideo: closeVideo)
