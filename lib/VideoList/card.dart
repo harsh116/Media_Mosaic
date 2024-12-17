@@ -4,12 +4,13 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 // import 'package:get_thumbnail_video/video_thumbnail.dart';
 
-import './models/screen_arguments.dart';
-import './lyrics.dart';
+import '../models/screen_arguments.dart';
+// import '../unused/lyrics.dart';
 
-import './constants.dart' as Constants;
+import '../constants.dart' as Constants;
 
 class Card extends StatefulWidget {
+  
   Card(
       {super.key,
       required this.title,

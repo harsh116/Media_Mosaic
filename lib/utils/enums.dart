@@ -1,0 +1,1 @@
+enum DescriptionType { Description, Lyrics }
