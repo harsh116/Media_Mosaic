@@ -228,6 +228,11 @@ class _EditOverlayState extends State<EditOverlay> {
                                     child: Text('Save',
                                         style: TextStyle(color: Colors.white)),
                                     onPressed: () async {
+                                      if (!validateFileName(
+                                          titleController.text)) {
+                                        print('invalid title name');
+                                        return;
+                                      }
                                       await savingChanges();
                                       widget.editVideo(true);
                                     },

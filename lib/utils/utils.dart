@@ -9,7 +9,10 @@ Future<List<ScreenArguments>> getvideoData(
     FileManager fm, String playlistName) async {
   String rootPath = await fm.localPath;
   final directory = Directory('${rootPath}/$playlistName/videos');
-  List<ScreenArguments> videoDataList = await directory.list().map((file) {
+  List<FileSystemEntity> videoListEntities = directory.listSync().toList()
+    ..sort((l, r) => l.statSync().modified.compareTo(r.statSync().modified));
+
+  List<ScreenArguments> videoDataList = videoListEntities.map((file) {
     String path = file.path;
     // print('path: $path');
     String vidName = RegExp(r'.+/(.+)\..+').firstMatch(path)!.group(1) ?? '';
@@ -139,4 +142,14 @@ String toAlphanumeric(String input) {
   return input
       .toLowerCase() // Convert to lowercase
       .replaceAll(RegExp(r'[^a-z0-9]'), '_'); // Replace non-alphanumeric with _
+}
+
+bool validateFileName(String filename) {
+  if (filename.length == 0 ||
+      filename.contains('/') ||
+      filename.contains('.')) {
+    return false;
+  }
+
+  return true;
 }

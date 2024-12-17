@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../utils/utils.dart';
+
 // import 'models/screen_arguments.dart';
 
 class InputOverlay extends StatefulWidget {
@@ -57,29 +59,34 @@ class _InputOverlayState extends State<InputOverlay> {
                           Padding(
                               padding: EdgeInsets.symmetric(
                                   vertical: 10, horizontal: 20),
-                              child: TextField(
+                              child: TextFormField(
                                 controller: inputController,
+                                autofocus: true,
                               )),
                         ],
                       ),
                     ),
                     Row(mainAxisAlignment: MainAxisAlignment.end, children: [
                       TextButton(
-                        style: TextButton.styleFrom(
-                            shape: LinearBorder(),
-                            backgroundColor:
-                                Color.fromRGBO(255, 255, 255, 0.4)),
-                        child: Text(
-                          'Ok',
-                          style: TextStyle(
-                            fontSize: 15,
-                            color: Colors.white,
-                            decoration: TextDecoration.none,
+                          style: TextButton.styleFrom(
+                              shape: LinearBorder(),
+                              backgroundColor:
+                                  Color.fromRGBO(255, 255, 255, 0.4)),
+                          child: Text(
+                            'Ok',
+                            style: TextStyle(
+                              fontSize: 15,
+                              color: Colors.white,
+                              decoration: TextDecoration.none,
+                            ),
                           ),
-                        ),
-                        onPressed: () =>
-                            widget.confirmAction(inputController.text, true),
-                      ),
+                          onPressed: () {
+                            if (!validateFileName(inputController.text)) {
+                              print('invalid title name');
+                              return;
+                            }
+                            widget.confirmAction(inputController.text, true);
+                          }),
                       SizedBox(width: 10),
                       TextButton(
                         style: TextButton.styleFrom(
