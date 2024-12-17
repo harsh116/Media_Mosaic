@@ -141,7 +141,14 @@ class _VideoPageFullScreenState extends State<VideoPageFullScreen> {
                       onPressed: widget.closeVideo,
                     ),
                     SizedBox(width: 10),
-                    Text(widget.args.title),
+                    SizedBox(
+                      width: MediaQuery.of(context).size.width - 100,
+                      // width: 20,
+
+                      // decoration: BoxDecoration()
+                      child: Text(widget.args.title,
+                          overflow: TextOverflow.clip, style: TextStyle()),
+                    ),
                   ],
                 ),
               ),

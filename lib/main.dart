@@ -28,6 +28,7 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
+      // showSemanticsDebugger: false,
       title: 'Flutter Demo',
       theme: ThemeData(
         // This is the theme of your application.
