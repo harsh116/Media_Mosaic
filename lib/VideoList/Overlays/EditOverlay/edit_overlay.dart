@@ -3,9 +3,9 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
 
-import '../../models/screen_arguments.dart';
-import '../../utils/file_manager.dart';
-import '../../utils/utils.dart';
+import '../../../models/screen_arguments.dart';
+import '../../../utils/file_manager.dart';
+import '../../../utils/utils.dart';
 import 'edit_overlay_components.dart';
 
 

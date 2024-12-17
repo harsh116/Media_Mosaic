@@ -5,7 +5,7 @@ import 'dart:convert';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 
-import './constants.dart' as Constants;
+import '../constants.dart' as Constants;
 import 'utils.dart';
 
 // class ExternalFileManager {

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'models/screen_arguments.dart';
+import '../../models/screen_arguments.dart';
 
 class InfoOverlay extends StatefulWidget {
   final ScreenArguments videoData;

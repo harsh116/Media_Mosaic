@@ -8,16 +8,16 @@ import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:file_picker/file_picker.dart';
 
-import './card.dart' as customCard;
+import 'card.dart' as customCard;
 // import './video_page_full_screen.dart';
-import './models/screen_arguments.dart';
-import './constants.dart' as Constants;
-import './pip_video.dart';
-import './file_manager.dart';
-import 'utils.dart';
-import 'delete_overlay.dart';
-import 'edit_overlay.dart';
-import 'info_overlay.dart';
+import '../models/screen_arguments.dart';
+import '../constants.dart' as Constants;
+import '../VideoPage/pip_video.dart';
+import '../utils/file_manager.dart';
+import '../utils/utils.dart';
+import 'Overlays/delete_overlay.dart';
+import 'Overlays/EditOverlay/edit_overlay.dart';
+import 'Overlays/info_overlay.dart';
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage(

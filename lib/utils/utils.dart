@@ -3,7 +3,7 @@ import 'dart:async';
 import 'dart:core';
 
 import 'file_manager.dart';
-import 'models/screen_arguments.dart';
+import '../models/screen_arguments.dart';
 
 Future<List<ScreenArguments>> getvideoData(
     FileManager fm, String playlistName) async {

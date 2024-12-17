@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import './models/screen_arguments.dart';
-import './video_page_full_screen.dart';
+import '../models/screen_arguments.dart';
+import 'video_page_full_screen.dart';
 
 class PIPVideo extends StatefulWidget {
   final ScreenArguments args;
