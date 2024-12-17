@@ -2,7 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:media_kit/media_kit.dart';
 import 'package:flutter_in_app_pip/flutter_in_app_pip.dart';
 
-import 'VideoList/homepage.dart';
+// import 'VideoList/homepage.dart';
+import 'constants.dart' as Constants;
+import 'utils/utils.dart';
+import 'video_list_container.dart';
 // import './videopage.dart';
 
 // import './card.dart' as customCard;
@@ -56,16 +59,19 @@ class _MyAppState extends State<MyApp> {
         ),
         useMaterial3: true,
       ),
-      home: const MyHomePage(title: 'Playlist', playlistName: 'Linkin Park'),
-      // initialRoute: '/',
+      home: VideoListContainer(),
+
+      // initialRoute: '/${toAlphanumeric(Constants.DEFAULT_PLAYLIST_NAME)}',
       // routes: {
-      //   '/': (context) {
+      //   '/${toAlphanumeric(Constants.DEFAULT_PLAYLIST_NAME)}': (context) {
+      //     return const MyHomePage(
+      //         title: 'Playlist', playlistName: Constants.DEFAULT_PLAYLIST_NAME);
       //     // setState(() =>
-      //     homepageState = const MyHomePage(title: 'Playlist');
+      //     // homepageState = const MyHomePage(title: 'Playlist');
       //     // );
-      //     return homepageState!;
+      //     // return homepageState!;
       //   },
-      //   '/video': (context) => Videopage(homepageState: homepageState),
+      //   // '/video': (context) => Videopage(homepageState: homepageState),
       // },
     );
   }

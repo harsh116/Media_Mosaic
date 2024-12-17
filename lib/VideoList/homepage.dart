@@ -19,10 +19,14 @@ import 'Overlays/delete_overlay.dart';
 import 'Overlays/EditOverlay/edit_overlay.dart';
 import 'Overlays/info_overlay.dart';
 import 'Overlays/yes_no_overlay.dart';
+import 'Overlays/input_overlay.dart';
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage(
-      {super.key, required this.title, required this.playlistName});
+      {super.key,
+      required this.title,
+      required this.playlistName,
+      required this.setPlayListName});
 
   // This widget is the home page of your application. It is stateful, meaning
   // that it has a State object (defined below) that contains fields that affect
@@ -35,6 +39,7 @@ class MyHomePage extends StatefulWidget {
 
   final String title;
   final String playlistName;
+  final void Function(String) setPlayListName;
 
   @override
   State<MyHomePage> createState() => _MyHomePageState();
@@ -46,6 +51,8 @@ class _MyHomePageState extends State<MyHomePage> {
   List<ScreenArguments> videoDataList = [];
   ScreenArguments selectedVideoData = ScreenArguments("", vidPath: "");
 
+  List<String> playlistNames = <String>[];
+
   bool deleteMode = false;
   bool editMode = false;
   bool infoMode = false;
@@ -53,6 +60,7 @@ class _MyHomePageState extends State<MyHomePage> {
   bool isDeleteOverLay = false;
   bool isEditOverLay = false;
   bool isInfoOverLay = false;
+  bool isPlayListCreateOverlay = false;
 
   PopupMenuItem buildPopMenuItem(
       String title, IconData icondata, Function() onTap) {
@@ -132,7 +140,7 @@ class _MyHomePageState extends State<MyHomePage> {
   //   //
   // }
 
-  void initializeVideos() async {
+  Future<void> initializeVideos() async {
     // if (Platform.isAndroid) {
     //   await storagePermissions();
     //   ExternalFileManager efm = ExternalFileManager();
@@ -143,12 +151,41 @@ class _MyHomePageState extends State<MyHomePage> {
     // {
     FileManager fm = FileManager();
 
-    print('path: ${await fm.localPath}');
-    fm.createPlayListDirectories(widget.playlistName);
+    print(
+        'path: ${await fm.localPath},  playlistName : ${widget.playlistName}');
+    fm.createPlayListSubDirectories(widget.playlistName);
 
     videoDataList = await getvideoData(fm, widget.playlistName);
+
     setState(() => {});
     // }
+  }
+
+  Future<void> initializePlaylists() async {
+    FileManager fm = FileManager();
+    List<String> playLists_names = await fm.getPlayListNames();
+
+    // this will not store default playlist name or empty name
+    List<String> fixed_playLists_names = [];
+
+    for (String name in playLists_names) {
+      if (name == Constants.DEFAULT_PLAYLIST_NAME || name.isEmpty) {
+        continue;
+      }
+
+      fixed_playLists_names.add(name);
+    }
+
+    playlistNames = fixed_playLists_names;
+    print(fixed_playLists_names.toString());
+    setState(() => {});
+  }
+
+  Future<void> createPlaylist(String playlist_name) async {
+    FileManager fm = FileManager();
+    await fm.createPlayListDirectory(playlist_name);
+    initializePlaylists();
+    // setState(() => {});
   }
 
   @override
@@ -156,6 +193,7 @@ class _MyHomePageState extends State<MyHomePage> {
     ServicesBinding.instance.keyboard.addHandler(_onKey);
     // getPath();
     initializeVideos();
+    initializePlaylists();
     // print();
   }
 
@@ -337,6 +375,75 @@ class _MyHomePageState extends State<MyHomePage> {
                   ],
                 )
               ]),
+          drawer: Stack(
+            children: [
+              Drawer(
+                child: ListView(
+                  padding: EdgeInsets.zero,
+                  children: [
+                    // Text('Hey'),
+                    DrawerHeader(
+                      // padding: EdgeInsets.zero,
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).colorScheme.primary,
+                      ),
+
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Playlists',
+                            style: TextStyle(
+                              fontSize: 24,
+                            ),
+                          ),
+                          SizedBox(height: 40),
+                          IconButton(
+                              icon: Icon(
+                                Icons.add,
+                                size: 34,
+                              ),
+                              onPressed: () {
+                                isPlayListCreateOverlay = true;
+                                setState(() => {});
+                              }),
+                        ],
+                      ),
+                    ),
+
+                    ListTile(
+                      title: Text(Constants.DEFAULT_PLAYLIST_NAME),
+                      onTap: () {
+                        widget.setPlayListName(Constants.DEFAULT_PLAYLIST_NAME);
+                        initializeVideos();
+                      },
+                    ),
+
+                    for (String name in playlistNames)
+                      ListTile(
+                        title: Text(name),
+                        onTap: () {
+                          widget.setPlayListName(name);
+                          initializeVideos();
+                        },
+                      ),
+                  ],
+                ),
+              ),
+              isPlayListCreateOverlay
+                  ? InputOverlay(
+                      confirmAction: (String input, bool isaction) {
+                        if (isaction) {
+                          createPlaylist(input);
+                        }
+                        isPlayListCreateOverlay = false;
+                        setState(() => {});
+                      },
+                      message: 'Type the playlist name to add',
+                    )
+                  : Container(),
+            ],
+          ),
           body: SingleChildScrollView(
             scrollDirection: Axis.horizontal,
             child: Center(
@@ -361,31 +468,39 @@ class _MyHomePageState extends State<MyHomePage> {
                   // ),import './video_page_full_screen.dart';
                   child: SingleChildScrollView(
                     child: Center(
-                      child: Wrap(
-                        spacing: 40,
-                        runSpacing: 20,
-                        direction: Axis.horizontal,
-                        crossAxisAlignment: WrapCrossAlignment.start,
-                        children: videoDataList!.map((videoData) {
-                          return customCard.Card(
-                            title: videoData.title,
-                            arg: videoData,
-                            onClickVideo: openVideo,
-                          );
-                        }).toList(),
-                        // children: [
-                        //   for (int i = 0; i < 10; i++)
-                        //     customCard.Card(
-                        //         title: 'Numb ${i + 1}',
-                        //         onClickVideo: openVideo),
-                        // ],
-                      ),
+                      child: videoDataList.length > 0
+                          ? Wrap(
+                              spacing: 40,
+                              runSpacing: 20,
+                              direction: Axis.horizontal,
+                              crossAxisAlignment: WrapCrossAlignment.start,
+                              children: videoDataList.map((videoData) {
+                                return customCard.Card(
+                                  title: videoData.title,
+                                  arg: videoData,
+                                  onClickVideo: openVideo,
+                                );
+                              }).toList(),
+                              // children: [
+                              //   for (int i = 0; i < 10; i++)
+                              //     customCard.Card(
+                              //         title: 'Numb ${i + 1}',
+                              //         onClickVideo: openVideo),
+                              // ],
+                            )
+                          : Container(
+                              child:
+                                  Text('No videos added yet in this playlist',
+                                      style: TextStyle(
+                                        fontSize: 30,
+                                      ))),
                     ),
                   )),
             ),
           ),
           // floatingActionButton: FloatingActionButton(
           //   onPressed: () {
+
           //     // if (ModalRoute.of(context)!.settings.name != null) {
           //     // print('currentRoute: ${ModalRoute.of(context)!.settings.name}');
           //     // setState(() => {});

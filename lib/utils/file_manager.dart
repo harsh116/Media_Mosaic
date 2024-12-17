@@ -73,7 +73,7 @@ import 'utils.dart';
 // }
 
 class FileManager {
-  Future<void> createPlayListDirectories(String playlistName) async {
+  Future<void> createPlayListSubDirectories(String playlistName) async {
     List<String> directoriesString = [
       'videos',
       'lyrics',
@@ -90,6 +90,11 @@ class FileManager {
       Directory dir = await Directory('${playlistDirectoryPath}/$dirString');
       dir.create();
     }
+  }
+
+  Future<void> createPlayListDirectory(String playlistName) async {
+    Directory dir = await Directory('${await localPath}/$playlistName');
+    dir.create();
   }
 
   Future<String> get localPath async {
@@ -110,6 +115,19 @@ class FileManager {
   Future<File> get _localFile async {
     final path = await localPath;
     return File('$path/counter.txt');
+  }
+
+  Future<List<String>> getPlayListNames() async {
+    Directory playlistsParentDirectory = Directory('${await localPath}');
+    List<String> dirs = await playlistsParentDirectory.list().map((entity) {
+      String path = entity.path;
+      if (!path.contains('.')) {
+        return extractPlayListFromItsDirectory(path);
+      }
+      return "";
+    }).toList();
+
+    return dirs;
   }
 
   Future<bool> isFileExists(String path) async {

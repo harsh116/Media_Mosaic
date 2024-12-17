@@ -126,3 +126,17 @@ String getFilePathWithExtension(String parentDirectory, String filename) {
   // if file with given filename not found then returning empty string as path
   return "";
 }
+
+String extractPlayListFromItsDirectory(String playlistDirPath) {
+  String playlistName =
+      RegExp(r'.+/(.+)$').firstMatch(playlistDirPath)?.group(1) ?? '';
+
+  return playlistName;
+}
+
+// for naming routes
+String toAlphanumeric(String input) {
+  return input
+      .toLowerCase() // Convert to lowercase
+      .replaceAll(RegExp(r'[^a-z0-9]'), '_'); // Replace non-alphanumeric with _
+}
