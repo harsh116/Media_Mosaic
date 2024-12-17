@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'dart:async';
 import 'dart:convert';
+import 'dart:typed_data';
 
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -182,6 +183,19 @@ class FileManager {
     String path = await getFilePathWithExtension(
         '${await localPath}/$playlistName/thumbnails', title);
     return path;
+  }
+
+  Future<void> saveThumbnailInRespectivePath(
+      String title, String playlistName, Uint8List imageData) async {
+    String path = await getThumbnailFilePath(title, playlistName);
+
+    if (path.length == 0) {
+      path = '${await localPath}/$playlistName/thumbnails/$title.png';
+    }
+
+    File thumbnailFile = File(path);
+
+    thumbnailFile.writeAsBytesSync(imageData);
   }
 
   // deletes video and its details too

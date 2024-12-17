@@ -2,11 +2,28 @@ import 'package:flutter/material.dart';
 import 'package:media_kit/media_kit.dart';
 import 'package:media_kit_video/media_kit_video.dart';
 
+import 'package:playlist_flutter/models/screen_arguments.dart';
+
+import 'dart:typed_data';
+
 class Videoplayer extends StatefulWidget {
   final String url;
   final bool isVideoPlaying;
+  final ScreenArguments videoData;
+  final Function(Uint8List) savingScreenShot;
 
-  Videoplayer({required this.url, required this.isVideoPlaying});
+  final bool isScreenshotTaken;
+
+  // final Function(VoidCallback) setTakeScreenshot;
+
+  Videoplayer({
+    required this.url,
+    required this.isVideoPlaying,
+    required this.videoData,
+    required this.isScreenshotTaken,
+    required this.savingScreenShot,
+    // required this.setTakeScreenshot,
+  });
 
   @override
   State<Videoplayer> createState() => _VideoPlayerState();
@@ -17,6 +34,7 @@ class _VideoPlayerState extends State<Videoplayer> {
   // bool stateToggle = widget.stateToggle;
 
   final Player _player = Player();
+
   late final VideoController _controller = VideoController(
     _player,
     // configuration: const VideoControllerConfiguration(
@@ -32,6 +50,16 @@ class _VideoPlayerState extends State<Videoplayer> {
       Media(widget.url),
       play: true,
     );
+    // widget.setTakeScreenshot(takeScreenshot);
+  }
+
+  void takeScreenshot() async {
+    print('screenshot taken');
+    Uint8List? imageData = await _player.screenshot();
+
+    if (imageData != null) {
+      widget.savingScreenShot(imageData);
+    }
   }
 
   @override
@@ -52,6 +80,10 @@ class _VideoPlayerState extends State<Videoplayer> {
       );
 
       setState(() => {});
+    }
+
+    if (oldWidget.isScreenshotTaken != widget.isScreenshotTaken) {
+      takeScreenshot();
     }
   }
 

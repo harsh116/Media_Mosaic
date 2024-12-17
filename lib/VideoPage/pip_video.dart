@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 
 import '../models/screen_arguments.dart';
@@ -6,8 +8,13 @@ import 'video_page_full_screen.dart';
 class PIPVideo extends StatefulWidget {
   final ScreenArguments args;
   final void Function() closeVideo;
+  final Function(Uint8List) savingScreenShot;
 
-  const PIPVideo({super.key, required this.args, required this.closeVideo});
+  const PIPVideo(
+      {super.key,
+      required this.args,
+      required this.closeVideo,
+      required this.savingScreenShot});
 
   @override
   State<PIPVideo> createState() => _PIPVideoState();
@@ -55,6 +62,7 @@ class _PIPVideoState extends State<PIPVideo> {
             enablePIPmode: exitFullScreenPage,
             isVideoPlaying: isVideoPlaying,
             closeVideo: widget.closeVideo,
+            savingScreenShot: widget.savingScreenShot,
           ),
           isFloating
               ? GestureDetector(

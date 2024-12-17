@@ -10,12 +10,12 @@ import '../models/screen_arguments.dart';
 import '../constants.dart' as Constants;
 
 class Card extends StatefulWidget {
-  
-  Card(
-      {super.key,
-      required this.title,
-      required this.onClickVideo,
-      required this.arg});
+  Card({
+    super.key,
+    required this.title,
+    required this.onClickVideo,
+    required this.arg,
+  });
   final String title;
   final ScreenArguments arg;
 

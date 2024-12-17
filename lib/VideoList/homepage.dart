@@ -90,6 +90,16 @@ class _MyHomePageState extends State<MyHomePage> {
     return false;
   }
 
+  void savingScreenShot(Uint8List imageData) {
+    print('saving screenshot to file');
+
+    FileManager fm = FileManager();
+
+    fm.saveThumbnailInRespectivePath(
+        args.title, widget.playlistName, imageData);
+    initializeVideos();
+  }
+
   // List<String>? videoNames;
 
   // bool isVideoPageMounted
@@ -396,7 +406,11 @@ class _MyHomePageState extends State<MyHomePage> {
                 })
             : Container(),
         isVideoPageOpen
-            ? PIPVideo(args: args, closeVideo: closeVideo)
+            ? PIPVideo(
+                args: args,
+                closeVideo: closeVideo,
+                savingScreenShot: savingScreenShot,
+              )
             : Container(),
       ],
     );

@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 // import 'package:pip_view/pip_view.dart';
 
@@ -8,15 +10,14 @@ import 'description_box.dart';
 
 import '../utils/enums.dart';
 
-
-
-
 class VideoPageFullScreen extends StatefulWidget {
   final ScreenArguments args;
   final bool isFloating;
   final bool isVideoPlaying;
   final void Function() enablePIPmode;
   final void Function() closeVideo;
+  final Function(Uint8List) savingScreenShot;
+
   // Widget? homepageState;
   // final BuildContext homepageContext;
   VideoPageFullScreen({
@@ -26,6 +27,7 @@ class VideoPageFullScreen extends StatefulWidget {
     required this.enablePIPmode,
     required this.isVideoPlaying,
     required this.closeVideo,
+    required this.savingScreenShot,
     // this.homepageState,
     // required this.homepageContext
   });
@@ -38,6 +40,14 @@ class _VideoPageFullScreenState extends State<VideoPageFullScreen> {
   String? description;
   // String ch="1";
   DescriptionType descriptionType = DescriptionType.Lyrics;
+
+  bool isScreenshotTaken = false;
+
+  // VoidCallback? takeScreenShot;
+  // void setTakeScreenShot(Function() callback) {
+  //   takeScreenShot = callback;
+  //   setState(() => {});
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -82,11 +92,41 @@ class _VideoPageFullScreenState extends State<VideoPageFullScreen> {
             Expanded(
               flex: 1,
               child: Center(
-                child: Videoplayer(
-                  url:
-                      // 'https://user-images.githubusercontent.com/28951144/229373720-14d69157-1a56-4a78-a2f4-d7a134d7c3e9.mp4',
-                      widget.args.vidPath,
-                  isVideoPlaying: widget.isVideoPlaying,
+                child: Stack(
+                  clipBehavior: Clip.none,
+                  children: [
+                    Videoplayer(
+                      url:
+                          // 'https://user-images.githubusercontent.com/28951144/229373720-14d69157-1a56-4a78-a2f4-d7a134d7c3e9.mp4',
+                          widget.args.vidPath,
+                      isVideoPlaying: widget.isVideoPlaying,
+                      videoData: widget.args,
+                      isScreenshotTaken: isScreenshotTaken,
+                      savingScreenShot: widget.savingScreenShot,
+                      // setTakeScreenshot: setTakeScreenShot,
+                    ),
+                    !isFloating
+                        ? Positioned(
+                            top: -10,
+                            right: -10,
+                            child: IconButton(
+                              icon: Icon(Icons.screenshot),
+                              onPressed: () {
+                                print(
+                                    'screenshot button pressed'); // this path is reached
+
+                                setState(
+                                  () => isScreenshotTaken = !isScreenshotTaken,
+                                );
+
+                                // if (takeScreenShot != null) {
+                                //   takeScreenShot!();
+                                // }
+                              },
+                            ),
+                          )
+                        : Container(),
+                  ],
                 ),
               ),
             ),
