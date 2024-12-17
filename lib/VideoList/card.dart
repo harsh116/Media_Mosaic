@@ -88,7 +88,8 @@ class _CardState extends State<Card> {
                 // Image.memory(
                 //   uint8list!,
                 // ),
-                widget.arg.thumbnailPath != null
+                widget.arg.thumbnailPath != null &&
+                        File(widget.arg.thumbnailPath!).existsSync()
                     ? Image.memory(
                         File(widget.arg.thumbnailPath!).readAsBytesSync(),
                         width: carWidth,

@@ -8,7 +8,6 @@ import '../../../utils/file_manager.dart';
 import '../../../utils/utils.dart';
 import 'edit_overlay_components.dart';
 
-
 class EditOverlay extends StatefulWidget {
   final Function(bool isEdit) editVideo;
   final ScreenArguments videoData;
@@ -84,7 +83,8 @@ class _EditOverlayState extends State<EditOverlay> {
     // saving title of song
     FileManager fm = FileManager();
 
-    fm.changeTitle(widget.videoData.title, playlistName, titleController.text);
+    await fm.changeTitle(
+        widget.videoData.title, playlistName, titleController.text);
 
     // String newVidPath =
     //     '${extractParentDirectory(widget.videoData.vidPath)}/${titleController.text}.${extractExtension(widget.videoData.vidPath)}';

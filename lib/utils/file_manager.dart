@@ -235,18 +235,23 @@ class FileManager {
     File thumbnailFile =
         File('${await getThumbnailFilePath(oldTitle, playlistName)}');
 
+    print('before configuring new files');
+
     String newVidPath =
         '${extractParentDirectory('${await getVideoFilePath(oldTitle, playlistName)}')}/${newTitle}.${extractExtension('${await getVideoFilePath(oldTitle, playlistName)}')}';
+    print('after newVidPath');
     String newLyricPath =
         '${extractParentDirectory('${await getLyricFilePath(oldTitle, playlistName)}')}/${newTitle}.${extractExtension('${await getLyricFilePath(oldTitle, playlistName)}')}';
-
+    print('after newlyricsPath');
     String newDescriptionPath =
         '${extractParentDirectory('${await getDescriptionFilePath(oldTitle, playlistName)}')}/${newTitle}.${extractExtension('${await getDescriptionFilePath(oldTitle, playlistName)}')}';
-
+    print('after newdesPath');
     String newThumbnailPath =
         '${extractParentDirectory('${await getThumbnailFilePath(oldTitle, playlistName)}')}/${newTitle}.${extractExtension('${await getThumbnailFilePath(oldTitle, playlistName)}')}';
 
+    print('before video rename');
     videoFile.renameSync(newVidPath);
+    print('after video rename');
     if (lyricFile.existsSync()) {
       lyricFile.renameSync(newLyricPath);
     }

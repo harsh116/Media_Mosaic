@@ -84,12 +84,12 @@ String extractFileName(String vidPath) {
 }
 
 String extractParentDirectory(String vidPath) {
-  String vidName = RegExp(r'^(.+)/.+\..+$').firstMatch(vidPath)!.group(1) ?? '';
+  String vidName = RegExp(r'^(.+)/.+\..+$').firstMatch(vidPath)?.group(1) ?? '';
   return vidName;
 }
 
 String extractExtension(String vidPath) {
-  String vidName = RegExp(r'.+/.+\.(.+)').firstMatch(vidPath)!.group(1) ?? '';
+  String vidName = RegExp(r'.+/.+\.(.+)').firstMatch(vidPath)?.group(1) ?? '';
   return vidName;
 }
 

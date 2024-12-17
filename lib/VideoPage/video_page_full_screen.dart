@@ -7,6 +7,7 @@ import '../models/screen_arguments.dart';
 import 'videoplayer.dart';
 import '../VideoList/homepage.dart';
 import 'description_box.dart';
+import '../VideoList/Overlays/yes_no_overlay.dart';
 
 import '../utils/enums.dart';
 
@@ -42,6 +43,9 @@ class _VideoPageFullScreenState extends State<VideoPageFullScreen> {
   DescriptionType descriptionType = DescriptionType.Lyrics;
 
   bool isScreenshotTaken = false;
+  bool isYesNoOverlay = false;
+
+  // bool isOverlayYesNoMessageConfirmed = false;
 
   // VoidCallback? takeScreenShot;
   // void setTakeScreenShot(Function() callback) {
@@ -86,143 +90,169 @@ class _VideoPageFullScreenState extends State<VideoPageFullScreen> {
                   ],
                 ),
               ),
-        body: Column(
-          // crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            Expanded(
-              flex: 1,
-              child: Center(
-                child: Stack(
-                  clipBehavior: Clip.none,
-                  children: [
-                    Videoplayer(
-                      url:
-                          // 'https://user-images.githubusercontent.com/28951144/229373720-14d69157-1a56-4a78-a2f4-d7a134d7c3e9.mp4',
-                          widget.args.vidPath,
-                      isVideoPlaying: widget.isVideoPlaying,
-                      videoData: widget.args,
-                      isScreenshotTaken: isScreenshotTaken,
-                      savingScreenShot: widget.savingScreenShot,
-                      // setTakeScreenshot: setTakeScreenShot,
+        body: Stack(
+          children: [
+            Column(
+              // crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Expanded(
+                  flex: 1,
+                  child: Center(
+                    child: Stack(
+                      clipBehavior: Clip.none,
+                      children: [
+                        Videoplayer(
+                          url:
+                              // 'https://user-images.githubusercontent.com/28951144/229373720-14d69157-1a56-4a78-a2f4-d7a134d7c3e9.mp4',
+                              widget.args.vidPath,
+                          isVideoPlaying: widget.isVideoPlaying,
+                          videoData: widget.args,
+                          isScreenshotTaken: isScreenshotTaken,
+                          savingScreenShot: widget.savingScreenShot,
+                          // setTakeScreenshot: setTakeScreenShot,
+                        ),
+                        !isFloating
+                            ? Positioned(
+                                top: -10,
+                                right: -10,
+                                child: IconButton(
+                                  icon: Icon(Icons.screenshot),
+                                  onPressed: () {
+                                    print(
+                                        'screenshot button pressed'); // this path is reached
+
+                                    isYesNoOverlay = true;
+                                    setState(() => {});
+
+                                    // setState(
+                                    //   () => isScreenshotTaken =
+                                    //       !isScreenshotTaken,
+                                    // );
+
+                                    // if (takeScreenShot != null) {
+                                    //   takeScreenShot!();
+                                    // }
+                                  },
+                                ),
+                              )
+                            : Container(),
+                      ],
                     ),
-                    !isFloating
-                        ? Positioned(
-                            top: -10,
-                            right: -10,
-                            child: IconButton(
-                              icon: Icon(Icons.screenshot),
-                              onPressed: () {
-                                print(
-                                    'screenshot button pressed'); // this path is reached
-
-                                setState(
-                                  () => isScreenshotTaken = !isScreenshotTaken,
-                                );
-
-                                // if (takeScreenShot != null) {
-                                //   takeScreenShot!();
-                                // }
-                              },
-                            ),
-                          )
-                        : Container(),
-                  ],
+                  ),
                 ),
-              ),
-            ),
-            // widget.args.lyrics != null &&
-            !isFloating
-                ? Expanded(
-                    flex: 1,
-                    child: ConstrainedBox(
-                      constraints: BoxConstraints(maxWidth: 1000),
-                      child: Stack(
-                        alignment: Alignment.center,
-                        children: [
-                          Container(
-                            padding: EdgeInsets.all(10),
-                            decoration: BoxDecoration(
-                              color: const Color.fromRGBO(255, 255, 255, 0.1),
-                              border: Border.all(
-                                  color: Theme.of(context).colorScheme.primary),
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(10)),
-                            ),
-                            width: MediaQuery.of(context).size.width,
-                            height: MediaQuery.of(context).size.height,
+                // widget.args.lyrics != null &&
+                !isFloating
+                    ? Expanded(
+                        flex: 1,
+                        child: ConstrainedBox(
+                          constraints: BoxConstraints(maxWidth: 1000),
+                          child: Stack(
+                            alignment: Alignment.center,
+                            children: [
+                              Container(
+                                padding: EdgeInsets.all(10),
+                                decoration: BoxDecoration(
+                                  color:
+                                      const Color.fromRGBO(255, 255, 255, 0.1),
+                                  border: Border.all(
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .primary),
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(10)),
+                                ),
+                                width: MediaQuery.of(context).size.width,
+                                height: MediaQuery.of(context).size.height,
 
-                            // height: 200,
-                            margin: EdgeInsets.symmetric(
-                                horizontal: 16, vertical: 32),
-                            child: Builder(builder: (context) {
-                              if (descriptionType == DescriptionType.Lyrics)
-                                return DescriptionBox(
-                                    descriptionType: descriptionType,
-                                    descriptionContent: lyrics);
-                              else if (descriptionType ==
-                                  DescriptionType.Description)
-                                return DescriptionBox(
-                                    descriptionType: descriptionType,
-                                    descriptionContent: description);
-                              else
-                                return Container();
-                            }),
-                          ),
-                          Positioned(
-                            bottom: 20,
-                            child: Container(
-                              decoration: BoxDecoration(
-                                  color: Color.fromRGBO(0, 0, 0, 0.5)),
-                              child: Row(
-                                children: descriptionTypes
-                                    .map((e) => Container(
-                                          decoration: BoxDecoration(
-                                            border: Border.all(
-                                                color: Theme.of(context)
-                                                    .colorScheme
-                                                    .primary),
-                                          ),
-                                          child: TextButton(
-                                              style: TextButton.styleFrom(
-                                                shape: LinearBorder(),
-                                              ),
-                                              child: Text(
-                                                e,
-                                                style: TextStyle(
-                                                    fontSize: 12,
+                                // height: 200,
+                                margin: EdgeInsets.symmetric(
+                                    horizontal: 16, vertical: 32),
+                                child: Builder(builder: (context) {
+                                  if (descriptionType == DescriptionType.Lyrics)
+                                    return DescriptionBox(
+                                        descriptionType: descriptionType,
+                                        descriptionContent: lyrics);
+                                  else if (descriptionType ==
+                                      DescriptionType.Description)
+                                    return DescriptionBox(
+                                        descriptionType: descriptionType,
+                                        descriptionContent: description);
+                                  else
+                                    return Container();
+                                }),
+                              ),
+                              Positioned(
+                                bottom: 20,
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                      color: Color.fromRGBO(0, 0, 0, 0.5)),
+                                  child: Row(
+                                    children: descriptionTypes
+                                        .map((e) => Container(
+                                              decoration: BoxDecoration(
+                                                border: Border.all(
                                                     color: Theme.of(context)
                                                         .colorScheme
-                                                        .inversePrimary),
+                                                        .primary),
                                               ),
-                                              onPressed: () {
-                                                if (e == 'Lyrics')
-                                                  setState(() =>
-                                                      descriptionType =
-                                                          DescriptionType
-                                                              .Lyrics);
-                                                if (e == 'Description') {
-                                                  setState(() =>
-                                                      descriptionType =
-                                                          DescriptionType
-                                                              .Description);
-                                                }
-                                              }),
-                                        ))
-                                    .toList(),
-                                // children: [
+                                              child: TextButton(
+                                                  style: TextButton.styleFrom(
+                                                    shape: LinearBorder(),
+                                                  ),
+                                                  child: Text(
+                                                    e,
+                                                    style: TextStyle(
+                                                        fontSize: 12,
+                                                        color: Theme.of(context)
+                                                            .colorScheme
+                                                            .inversePrimary),
+                                                  ),
+                                                  onPressed: () {
+                                                    if (e == 'Lyrics')
+                                                      setState(() =>
+                                                          descriptionType =
+                                                              DescriptionType
+                                                                  .Lyrics);
+                                                    if (e == 'Description') {
+                                                      setState(() =>
+                                                          descriptionType =
+                                                              DescriptionType
+                                                                  .Description);
+                                                    }
+                                                  }),
+                                            ))
+                                        .toList(),
+                                    // children: [
 
-                                //   TextButton(
-                                //       child: Text('Lyrics'), onPressed: () => {}),
-                                //   TextButton(
-                                //       child: Text('Description'),
-                                //       onPressed: () => {}),
-                                // ],
+                                    //   TextButton(
+                                    //       child: Text('Lyrics'), onPressed: () => {}),
+                                    //   TextButton(
+                                    //       child: Text('Description'),
+                                    //       onPressed: () => {}),
+                                    // ],
+                                  ),
+                                ),
                               ),
-                            ),
+                            ],
                           ),
-                        ],
-                      ),
-                    ),
+                        ),
+                      )
+                    : Container(),
+              ],
+            ),
+            !isFloating && isYesNoOverlay
+                ? YesNoOverlay(
+                    confirmAction: (bool isConfirm) {
+                      if (isConfirm) {
+                        // isOverlayYesNoMessageConfirmed = true;
+
+                        isScreenshotTaken = !isScreenshotTaken;
+                      }
+                      isYesNoOverlay = false;
+                      setState(() => {});
+                    },
+                    message:
+                        "Are your sure you wanna update thumnail with current frame",
                   )
                 : Container(),
           ],
