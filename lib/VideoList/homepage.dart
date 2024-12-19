@@ -21,6 +21,8 @@ import 'Overlays/info_overlay.dart';
 import 'Overlays/yes_no_overlay.dart';
 import 'Overlays/input_overlay.dart';
 
+import '../utils/api.dart';
+
 class MyHomePage extends StatefulWidget {
   const MyHomePage(
       {super.key,
@@ -52,6 +54,8 @@ class _MyHomePageState extends State<MyHomePage> {
   ScreenArguments selectedVideoData = ScreenArguments("", vidPath: "");
 
   List<String> playlistNames = <String>[];
+
+  // var snackbar =
 
   bool deleteMode = false;
   bool editMode = false;
@@ -182,6 +186,18 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Future<void> createPlaylist(String playlist_name) async {
+    if (!validateFileName(playlist_name)) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text(
+          'Playlist name cannot contain letter like "/" or ""."',
+          style: TextStyle(
+            color: Theme.of(context).colorScheme.inversePrimary,
+          ),
+        ),
+        backgroundColor: Theme.of(context).colorScheme.primary,
+      ));
+    }
+
     FileManager fm = FileManager();
     await fm.createPlayListDirectory(playlist_name);
     initializePlaylists();
@@ -192,8 +208,10 @@ class _MyHomePageState extends State<MyHomePage> {
   void initState() {
     ServicesBinding.instance.keyboard.addHandler(_onKey);
     // getPath();
+    // fetchAlbums();
     initializeVideos();
     initializePlaylists();
+
     // print();
   }
 

@@ -7,6 +7,7 @@ import '../../../models/screen_arguments.dart';
 import '../../../utils/file_manager.dart';
 import '../../../utils/utils.dart';
 import 'edit_overlay_components.dart';
+import '../../../utils/api.dart';
 
 class EditOverlay extends StatefulWidget {
   final Function(bool isEdit) editVideo;
@@ -28,6 +29,8 @@ class _EditOverlayState extends State<EditOverlay> {
 
   String selectedVidPath = '';
   String selectedThumbnailPath = '';
+
+  bool isLyricsLoading = false;
 
   @override
   void initState() {
@@ -123,6 +126,29 @@ class _EditOverlayState extends State<EditOverlay> {
     }
   }
 
+  Future<void> getLyrics() async {
+    isLyricsLoading = true;
+    setState(() {});
+    // fetching from title which is in input field not title set before
+    String lyrics = await fetchLyrics(titleController.text);
+    if (!lyrics.isEmpty) {
+      lyricsController.text = lyrics;
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text(
+          'Error in loading lyrics',
+          style: TextStyle(
+            color: Theme.of(context).colorScheme.inversePrimary,
+          ),
+        ),
+        backgroundColor: Theme.of(context).colorScheme.primary,
+      ));
+    }
+
+    isLyricsLoading = false;
+    setState(() {});
+  }
+
   @override
   void dispose() {
     // Clean up the controller when the widget is disposed.
@@ -190,11 +216,22 @@ class _EditOverlayState extends State<EditOverlay> {
                             FormRow(
                               labelWidth: labelWidth,
                               label: LabelText('Lyrics'),
-                              inputField: StyledTextFormField(
-                                initialValue: widget.videoData.lyrics ?? '',
-                                controller: lyricsController,
-                                hintValue: 'Enter lyrics of video',
-                                isMultiLine: true,
+                              inputField: Row(
+                                children: [
+                                  StyledTextFormField(
+                                    initialValue: widget.videoData.lyrics ?? '',
+                                    controller: lyricsController,
+                                    hintValue: 'Enter lyrics of video',
+                                    isMultiLine: true,
+                                  ),
+                                  isLyricsLoading
+                                      ? CircularProgressIndicator()
+                                      : IconButton(
+                                          icon: Icon(Icons.sync,
+                                              color: Colors.black),
+                                          onPressed: getLyrics,
+                                        ),
+                                ],
                               ),
                             ),
                             FormRow(
@@ -228,9 +265,24 @@ class _EditOverlayState extends State<EditOverlay> {
                                     child: Text('Save',
                                         style: TextStyle(color: Colors.white)),
                                     onPressed: () async {
+                                      // if title validation failed then showing snackbar for error message
                                       if (!validateFileName(
                                           titleController.text)) {
                                         print('invalid title name');
+                                        ScaffoldMessenger.of(context)
+                                            .showSnackBar(SnackBar(
+                                          content: Text(
+                                            'Title cannot contain letter like "/" or ""."',
+                                            style: TextStyle(
+                                              color: Theme.of(context)
+                                                  .colorScheme
+                                                  .inversePrimary,
+                                            ),
+                                          ),
+                                          backgroundColor: Theme.of(context)
+                                              .colorScheme
+                                              .primary,
+                                        ));
                                         return;
                                       }
                                       await savingChanges();

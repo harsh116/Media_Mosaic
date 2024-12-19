@@ -83,6 +83,21 @@ class _InputOverlayState extends State<InputOverlay> {
                           onPressed: () {
                             if (!validateFileName(inputController.text)) {
                               print('invalid title name');
+                              ScaffoldMessenger.of(context)
+                                  .showSnackBar(SnackBar(
+                                content: Center(
+                                  child: Text(
+                                    'Playlist name cannot contain letter like "/" or ""."',
+                                    style: TextStyle(
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .inversePrimary,
+                                    ),
+                                  ),
+                                ),
+                                backgroundColor:
+                                    Theme.of(context).colorScheme.primary,
+                              ));
                               return;
                             }
                             widget.confirmAction(inputController.text, true);
