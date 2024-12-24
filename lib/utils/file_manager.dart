@@ -5,6 +5,7 @@ import 'dart:typed_data';
 
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:device_info_plus/device_info_plus.dart';
 
 import '../constants.dart' as Constants;
 import 'utils.dart';
@@ -305,13 +306,38 @@ class FileManager {
 // for android
 Future<void> storagePermissions() async {
   // var status = await Permission.storage.request();
-  var status = await Permission.storage.request();
-  // Permission.storage.request();
-  // var status = await Permission.camera.request();
+  //
 
-  if (status.isDenied) {
-    print('storage permission denied');
-  } else if (status.isGranted) {
-    print('storage permission granted');
+  // print('version: ${Platform.operatingSystemVersion}');
+
+  DeviceInfoPlugin deviceinfo = DeviceInfoPlugin();
+  AndroidDeviceInfo androidInfo = await deviceinfo.androidInfo;
+  // print('info : ${androidInfo.version.release}');
+
+  PermissionStatus existingStatus;
+
+  if (int.parse(androidInfo.version.release) >= 13) {
+    existingStatus = await Permission.manageExternalStorage.status;
+  } else {
+    existingStatus = await Permission.storage.status;
+  }
+
+  if (existingStatus.isDenied) {
+    PermissionStatus status;
+
+    if (int.parse(androidInfo.version.release) >= 13) {
+      status = await Permission.manageExternalStorage.request();
+    } else {
+      status = await Permission.storage.request();
+    }
+
+    // Permission.storage.request();
+    // var status = await Permission.camera.request();
+
+    if (status.isDenied) {
+      print('storage permission denied');
+    } else if (status.isGranted) {
+      print('storage permission granted');
+    }
   }
 }

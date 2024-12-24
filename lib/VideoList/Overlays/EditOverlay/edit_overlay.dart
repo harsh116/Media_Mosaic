@@ -215,7 +215,19 @@ class _EditOverlayState extends State<EditOverlay> {
                             ),
                             FormRow(
                               labelWidth: labelWidth,
-                              label: LabelText('Lyrics'),
+                              label: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  LabelText('Lyrics'),
+                                  isLyricsLoading
+                                      ? CircularProgressIndicator()
+                                      : IconButton(
+                                          icon: Icon(Icons.sync,
+                                              color: Colors.black),
+                                          onPressed: getLyrics,
+                                        ),
+                                ],
+                              ),
                               inputField: Row(
                                 children: [
                                   StyledTextFormField(
@@ -224,13 +236,6 @@ class _EditOverlayState extends State<EditOverlay> {
                                     hintValue: 'Enter lyrics of video',
                                     isMultiLine: true,
                                   ),
-                                  isLyricsLoading
-                                      ? CircularProgressIndicator()
-                                      : IconButton(
-                                          icon: Icon(Icons.sync,
-                                              color: Colors.black),
-                                          onPressed: getLyrics,
-                                        ),
                                 ],
                               ),
                             ),

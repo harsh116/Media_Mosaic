@@ -47,6 +47,7 @@ dependencies:
   http: ^1.2.2
   html: ^0.15.5
   html_parser_plus: ^0.1.4
+  device_info_plus: ^11.2.0
 
 dev_dependencies:
   flutter_test:

@@ -186,18 +186,6 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Future<void> createPlaylist(String playlist_name) async {
-    if (!validateFileName(playlist_name)) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text(
-          'Playlist name cannot contain letter like "/" or ""."',
-          style: TextStyle(
-            color: Theme.of(context).colorScheme.inversePrimary,
-          ),
-        ),
-        backgroundColor: Theme.of(context).colorScheme.primary,
-      ));
-    }
-
     FileManager fm = FileManager();
     await fm.createPlayListDirectory(playlist_name);
     initializePlaylists();
@@ -206,6 +194,10 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   void initState() {
+    if (Platform.isAndroid) {
+      storagePermissions();
+    }
+
     ServicesBinding.instance.keyboard.addHandler(_onKey);
     // getPath();
     // fetchAlbums();
@@ -213,6 +205,14 @@ class _MyHomePageState extends State<MyHomePage> {
     initializePlaylists();
 
     // print();
+  }
+
+  @override
+  void didUpdateWidget(MyHomePage oldWidget) {
+    // if playlist change then reload the video
+    if (oldWidget.playlistName != widget.playlistName) {
+      initializeVideos();
+    }
   }
 
   void _incrementCounter() {
@@ -261,12 +261,12 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
-  void editVideo(bool isEdit) {
+  void editVideo(bool isEdit) async {
     print('Edit video');
 
     if (isEdit) {
       print('isEdit: true');
-      initializeVideos();
+      await initializeVideos();
     }
 
     isEditOverLay = false;
@@ -433,7 +433,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       title: Text(Constants.DEFAULT_PLAYLIST_NAME),
                       onTap: () {
                         widget.setPlayListName(Constants.DEFAULT_PLAYLIST_NAME);
-                        initializeVideos();
+                        // initializeVideos();
                       },
                     ),
 
@@ -442,7 +442,8 @@ class _MyHomePageState extends State<MyHomePage> {
                         title: Text(name),
                         onTap: () {
                           widget.setPlayListName(name);
-                          initializeVideos();
+                          // setState(() {});
+                          // initializeVideos();
                         },
                       ),
                   ],

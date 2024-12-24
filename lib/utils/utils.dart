@@ -32,7 +32,9 @@ Future<List<ScreenArguments>> getvideoData(
 
     try {
       final lyricFile = File(lyricsPath);
+
       if (lyricFile.existsSync()) {
+        print('lyrics file exist for $vidName');
         lyrics = lyricFile.readAsStringSync();
       }
 
