@@ -7,7 +7,8 @@ Supercharged video player made with flutter
 1. This app lets users make collection of videos and add lyrics or description so they dont have to fetch for them always in internet.
 2. PIP(Picture in Picture) mode. 
 3. Users can add thumnbail just by clicking screenshot button at top right section of video playing
-4. Can fetch lyrics from remote source 
+4. Can fetch lyrics from remote source
+5. This app uses filesystem instead of database to avoid vendor locking so users can access data too without need to use app. This is not possible in ios though as storage permission to external storage isnt allowed.
 
 ## Building
 
