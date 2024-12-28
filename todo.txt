@@ -1,0 +1,7 @@
+1. Update playlists and videos when permission is granted
+2.Fetch description of song
+3. *Search feature*
+4. edit button on lyrics and description will open edit overlay for that song
+
+Bugs
+1. in some devices, when lyrics are written for first time, state is not updating, also happening for thumbnail too sometimes. Workaround : any activity which refreshes list like changing playlist, adding/deleting.editing videos.

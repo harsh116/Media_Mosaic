@@ -1,16 +1,22 @@
-# playlist_flutter
+# Media_Mosaic
+Supercharged video player made with flutter
 
-A new Flutter project.
+**Note** : This app is in development mode and it may have bugs. Make sure to report it through issues section
 
-## Getting Started
+## Features
+1. This app lets users make collection of videos and add lyrics or description so they dont have to fetch for them always in internet.
+2. PIP(Picture in Picture) mode. 
+3. Users can add thumnbail just by clicking screenshot button at top right section of video playing
+4. Can fetch lyrics from remote source 
 
-This project is a starting point for a Flutter application.
+## Building
 
-A few resources to get you started if this is your first Flutter project:
+### Prerequisites
+Make sure to install flutter and android sdk tools(necessary for building apk) and other build tools too. Follow this guide for installing flutter 
+https://docs.flutter.dev/get-started/install
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+### Desktop
+For example to build for linux use `flutter build linux`. For windows replace linux with windows.
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+### Android
+Use `flutter build apk`.
