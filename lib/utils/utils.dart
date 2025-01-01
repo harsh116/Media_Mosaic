@@ -5,6 +5,19 @@ import 'dart:core';
 import 'file_manager.dart';
 import '../models/screen_arguments.dart';
 
+Future<File> moveFile(File sourceFile, String newPath) async {
+  try {
+    // prefer using rename as it is probably faster
+    return await sourceFile.rename(newPath);
+  } on FileSystemException catch (e) {
+    e;
+    // if rename fails, copy the source file and then delete it
+    final newFile = await sourceFile.copy(newPath);
+    await sourceFile.delete();
+    return newFile;
+  }
+}
+
 Future<List<ScreenArguments>> getvideoData(
     FileManager fm, String playlistName) async {
   String rootPath = await fm.localPath;

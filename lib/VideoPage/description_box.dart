@@ -1,12 +1,18 @@
 import 'package:flutter/material.dart';
 
+// import '../models/screen_arguments.dart';
 import '../utils/enums.dart';
+
 class DescriptionBox extends StatefulWidget {
   final DescriptionType descriptionType;
   String? descriptionContent;
 
+  final Function() editVideoFromVideoPageButton;
   DescriptionBox(
-      {super.key, required this.descriptionType, this.descriptionContent});
+      {super.key,
+      required this.descriptionType,
+      this.descriptionContent,
+      required this.editVideoFromVideoPageButton});
 
   @override
   State<DescriptionBox> createState() => _DescriptionBoxState();
@@ -45,7 +51,10 @@ class _DescriptionBoxState extends State<DescriptionBox> {
                       // backgroundColor: Colors.grey,
                     )),
                 const SizedBox(width: 10),
-                IconButton(icon: Icon(Icons.edit), onPressed: () => {}),
+                IconButton(
+                  icon: Icon(Icons.edit),
+                  onPressed: widget.editVideoFromVideoPageButton,
+                ),
               ],
             ),
           ),

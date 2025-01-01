@@ -271,15 +271,6 @@ class FileManager {
     print('before video rename');
     videoFile.renameSync(newVidPath);
     print('after video rename');
-    if (lyricFile.existsSync()) {
-      lyricFile.renameSync(newLyricPath);
-    }
-    if (descriptionFile.existsSync()) {
-      descriptionFile.renameSync(newDescriptionPath);
-    }
-    if (thumbnailFile.existsSync()) {
-      thumbnailFile.renameSync(newThumbnailPath);
-    }
   }
 
   // deletes video only
@@ -290,6 +281,42 @@ class FileManager {
     }
 
     videoFile.delete();
+  }
+
+  // move video to other playlist
+  Future<void> moveVideosToDifferentPlaylist(String title,
+      String currentPlaylistName, String anotherPlaylistName) async {
+    File videoFile =
+        File('${await getVideoFilePath(title, currentPlaylistName)}');
+
+    if (!(await videoFile.exists())) {
+      return;
+    }
+
+    moveFile(videoFile,
+        '${await localPath}/$anotherPlaylistName/videos/${extractFileName(videoFile.path)}');
+
+    File lyricFile =
+        File('${await getLyricFilePath(title, currentPlaylistName)}');
+
+    // File videoFile = File();
+    File descriptionFile =
+        File('${await getDescriptionFilePath(title, currentPlaylistName)}');
+    File thumbnailFile =
+        File('${await getThumbnailFilePath(title, currentPlaylistName)}');
+
+    if (lyricFile.existsSync()) {
+      moveFile(
+          lyricFile, '${await getLyricFilePath(title, anotherPlaylistName)}');
+    }
+    if (descriptionFile.existsSync()) {
+      moveFile(descriptionFile,
+          '${await getDescriptionFilePath(title, anotherPlaylistName)}');
+    }
+    if (thumbnailFile.existsSync()) {
+      moveFile(thumbnailFile,
+          '${await localPath}/$anotherPlaylistName/lyrics/${extractFileName(lyricFile.path)}');
+    }
   }
 
   Future<String> readFile() async {
@@ -304,6 +331,7 @@ class FileManager {
 }
 
 // for android
+
 Future<void> storagePermissions() async {
   // var status = await Permission.storage.request();
   //

@@ -9,12 +9,14 @@ class PIPVideo extends StatefulWidget {
   final ScreenArguments args;
   final void Function() closeVideo;
   final Function(Uint8List) savingScreenShot;
+  final Function(ScreenArguments videoData) editVideoFromVideoPageButton;
 
   const PIPVideo(
       {super.key,
       required this.args,
       required this.closeVideo,
-      required this.savingScreenShot});
+      required this.savingScreenShot,
+      required this.editVideoFromVideoPageButton});
 
   @override
   State<PIPVideo> createState() => _PIPVideoState();
@@ -44,6 +46,12 @@ class _PIPVideoState extends State<PIPVideo> {
     setState(() {});
   }
 
+  void editVideoFromVideoPageButton(ScreenArguments videoData) {
+    isFloating = true;
+    setState(() => {});
+    widget.editVideoFromVideoPageButton(videoData);
+  }
+
   @override
   Widget build(BuildContext context) {
     const double pipHeight = 170;
@@ -63,6 +71,7 @@ class _PIPVideoState extends State<PIPVideo> {
             isVideoPlaying: isVideoPlaying,
             closeVideo: widget.closeVideo,
             savingScreenShot: widget.savingScreenShot,
+            editVideoFromVideoPageButton: editVideoFromVideoPageButton,
           ),
           isFloating
               ? GestureDetector(

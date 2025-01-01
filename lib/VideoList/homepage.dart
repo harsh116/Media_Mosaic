@@ -20,6 +20,7 @@ import 'Overlays/EditOverlay/edit_overlay.dart';
 import 'Overlays/info_overlay.dart';
 import 'Overlays/yes_no_overlay.dart';
 import 'Overlays/input_overlay.dart';
+import 'Overlays/selectinput_overlay.dart';
 
 import '../utils/api.dart';
 
@@ -60,11 +61,16 @@ class _MyHomePageState extends State<MyHomePage> {
   bool deleteMode = false;
   bool editMode = false;
   bool infoMode = false;
+  bool moveMode = false;
 
   bool isDeleteOverLay = false;
   bool isEditOverLay = false;
   bool isInfoOverLay = false;
   bool isPlayListCreateOverlay = false;
+  bool isMoveOverlay = false;
+
+  // initial selection of dropdown menu so to make multiple videos moving easier
+  String lastplaylistSelected = "";
 
   PopupMenuItem buildPopMenuItem(
       String title, IconData icondata, Function() onTap) {
@@ -192,17 +198,25 @@ class _MyHomePageState extends State<MyHomePage> {
     // setState(() => {});
   }
 
-  @override
-  void initState() {
+  // function to initialize playlist and videos and also ask for storage permission before continue to initialize
+  // in case of android
+  void initializeContents() async {
     if (Platform.isAndroid) {
-      storagePermissions();
+      await storagePermissions();
     }
 
     ServicesBinding.instance.keyboard.addHandler(_onKey);
     // getPath();
     // fetchAlbums();
-    initializeVideos();
     initializePlaylists();
+    initializeVideos();
+  }
+
+  @override
+  void initState() {
+    initializeContents();
+    lastplaylistSelected = widget.playlistName;
+    setState(() => {});
 
     // print();
   }
@@ -253,12 +267,27 @@ class _MyHomePageState extends State<MyHomePage> {
         return;
       }
 
+      if (moveMode == true) {
+        isMoveOverlay = true;
+        selectedVideoData = ScreenArguments(title,
+            vidPath: vidPath, lyrics: lyrics, description: description);
+
+        return;
+      }
+
       print('openVideopath: $vidPath');
       // await closeVideo();
       isVideoPageOpen = true;
       args = ScreenArguments(title,
           lyrics: lyrics, vidPath: vidPath, description: description);
     });
+  }
+
+  // this will make sure to open edit overlay after edit button is pressed when in video page
+  void editVideoFromVideoPageButton(ScreenArguments videoData) {
+    isEditOverLay = true;
+    selectedVideoData = videoData;
+    setState(() => {});
   }
 
   void editVideo(bool isEdit) async {
@@ -296,8 +325,18 @@ class _MyHomePageState extends State<MyHomePage> {
     setState(() => {});
   }
 
+  Future<void> moveVideo(String input) async {
+    // lastplaylist selected
+    lastplaylistSelected = input;
+    FileManager fm = FileManager();
+    // print('movecideo title: ' + selectedVideoData.title);
+    await fm.moveVideosToDifferentPlaylist(
+        selectedVideoData.title, widget.playlistName, input);
+    initializeVideos();
+  }
+
   void cancelAllModes() {
-    editMode = deleteMode = infoMode = false;
+    editMode = deleteMode = infoMode = moveMode = false;
     setState(() => {});
   }
 
@@ -366,7 +405,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   children: [
                     // IconButton(
                     //     icon: Icon(Icons.more_vert), onPressed: () => { }),
-                    (editMode || deleteMode || infoMode)
+                    (editMode || deleteMode || infoMode || moveMode)
                         ? IconButton(
                             icon: Icon(Icons.close),
                             onPressed: () {
@@ -386,6 +425,10 @@ class _MyHomePageState extends State<MyHomePage> {
                               }),
                               buildPopMenuItem('Info Mode', Icons.info, () {
                                 infoMode = true;
+                                setState(() => {});
+                              }),
+                              buildPopMenuItem('Migrate Mode', Icons.cut, () {
+                                moveMode = true;
                                 setState(() => {});
                               }),
                             ],
@@ -485,35 +528,62 @@ class _MyHomePageState extends State<MyHomePage> {
                   //     for (int i = 0; i < 10; i++) customCard.Card(title: 'Numb'),
                   //   ],
                   // ),import './video_page_full_screen.dart';
-                  child: SingleChildScrollView(
-                    child: Center(
-                      child: videoDataList.length > 0
-                          ? Wrap(
-                              spacing: 40,
-                              runSpacing: 20,
-                              direction: Axis.horizontal,
-                              crossAxisAlignment: WrapCrossAlignment.start,
-                              children: videoDataList.map((videoData) {
-                                return customCard.Card(
-                                  title: videoData.title,
-                                  arg: videoData,
-                                  onClickVideo: openVideo,
-                                );
-                              }).toList(),
-                              // children: [
-                              //   for (int i = 0; i < 10; i++)
-                              //     customCard.Card(
-                              //         title: 'Numb ${i + 1}',
-                              //         onClickVideo: openVideo),
-                              // ],
-                            )
-                          : Container(
-                              child:
-                                  Text('No videos added yet in this playlist',
+                  child: Stack(
+                    children: [
+                      SingleChildScrollView(
+                        child: Center(
+                          child: videoDataList.length > 0
+                              ? Wrap(
+                                  spacing: 40,
+                                  runSpacing: 20,
+                                  direction: Axis.horizontal,
+                                  crossAxisAlignment: WrapCrossAlignment.start,
+                                  children: videoDataList.map((videoData) {
+                                    return customCard.Card(
+                                      title: videoData.title,
+                                      arg: videoData,
+                                      onClickVideo: openVideo,
+                                    );
+                                  }).toList(),
+                                  // children: [
+                                  //   for (int i = 0; i < 10; i++)
+                                  //     customCard.Card(
+                                  //         title: 'Numb ${i + 1}',
+                                  //         onClickVideo: openVideo),
+                                  // ],
+                                )
+                              : Container(
+                                  child: Text(
+                                      'No videos added yet in this playlist',
                                       style: TextStyle(
                                         fontSize: 30,
                                       ))),
-                    ),
+                        ),
+                      ),
+                      isMoveOverlay
+                          ? SelectinputOverlay(
+                              initialPlayListName: lastplaylistSelected,
+                              inputLists: [
+                                ...playlistNames,
+                                Constants.DEFAULT_PLAYLIST_NAME,
+                              ],
+                              confirmAction:
+                                  (String input, bool isaction) async {
+                                print('input got: ' + input);
+                                if (isaction) {
+                                  // createPlaylist(input);
+                                  await moveVideo(input);
+                                }
+                                selectedVideoData =
+                                    ScreenArguments('', vidPath: '');
+                                isMoveOverlay = false;
+                                setState(() => {});
+                              },
+                              message:
+                                  'Select the playlist to move this video "${selectedVideoData.title}" to',
+                            )
+                          : Container(),
+                    ],
                   )),
             ),
           ),
@@ -545,6 +615,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 args: args,
                 closeVideo: closeVideo,
                 savingScreenShot: savingScreenShot,
+                editVideoFromVideoPageButton: editVideoFromVideoPageButton,
               )
             : Container(),
       ],

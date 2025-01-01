@@ -18,6 +18,7 @@ class VideoPageFullScreen extends StatefulWidget {
   final void Function() enablePIPmode;
   final void Function() closeVideo;
   final Function(Uint8List) savingScreenShot;
+  final Function(ScreenArguments videoData) editVideoFromVideoPageButton;
 
   // Widget? homepageState;
   // final BuildContext homepageContext;
@@ -29,6 +30,7 @@ class VideoPageFullScreen extends StatefulWidget {
     required this.isVideoPlaying,
     required this.closeVideo,
     required this.savingScreenShot,
+    required this.editVideoFromVideoPageButton,
     // this.homepageState,
     // required this.homepageContext
   });
@@ -52,6 +54,11 @@ class _VideoPageFullScreenState extends State<VideoPageFullScreen> {
   //   takeScreenShot = callback;
   //   setState(() => {});
   // }
+
+  void editVideoFromVideoPageButton() {
+    print('edit video from page button pressed');
+    widget.editVideoFromVideoPageButton(widget.args);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -171,12 +178,16 @@ class _VideoPageFullScreenState extends State<VideoPageFullScreen> {
                                   if (descriptionType == DescriptionType.Lyrics)
                                     return DescriptionBox(
                                         descriptionType: descriptionType,
-                                        descriptionContent: lyrics);
+                                        descriptionContent: lyrics,
+                                        editVideoFromVideoPageButton:
+                                            editVideoFromVideoPageButton);
                                   else if (descriptionType ==
                                       DescriptionType.Description)
                                     return DescriptionBox(
                                         descriptionType: descriptionType,
-                                        descriptionContent: description);
+                                        descriptionContent: description,
+                                        editVideoFromVideoPageButton:
+                                            editVideoFromVideoPageButton);
                                   else
                                     return Container();
                                 }),
